@@ -48,7 +48,7 @@
                 "name": "password",
                 "type": "password",
                 "help": {
-                    "en": "Use this password to log into the admin interface for the ssb pub.",
+                    "en": "Use this password to log into the admin interface for the ssb pub."
                 }
             }
         ]
