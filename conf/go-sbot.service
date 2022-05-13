@@ -6,8 +6,9 @@ After=network.target
 Type=simple
 User=__APP__
 Group=__APP__
-WorkingDirectory=__DATADIR__
+WorkingDirectory=__DATADIR__/.ssb-go
 Environment="LIBRARIAN_WRITEALL=0"
+Environment="SSB_CONFIG_FILE=__DATADIR__/.ssb-go/config.toml"
 ExecStart=__FINALPATH__/go-sbot
 StandardOutput=append:/var/log/__APP__/__APP__.log
 StandardError=inherit
