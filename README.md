@@ -29,7 +29,7 @@ For more documentation about PeachPub, visit https://docs.peachcloud.org.
 
 **Shipped version:** 0.6.13~ynh3
 
-**Demo:** https://demo.peachcloud.org
+**Demo:** https://peachdemo.commoninternet.net
 
 ## Screenshots
 
