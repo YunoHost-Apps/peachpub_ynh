@@ -148,8 +148,8 @@ chown $app:$app "$datadir/.ssb-go/config.toml"
 ynh_script_progression --message="Configuring a systemd service..."  --weight=1
 
 # Create a dedicated systemd config
-ynh_add_systemd_config -t peach-web.service -s peach-web
-ynh_add_systemd_config -t go-sbot.service -s go-sbot
+ynh_add_systemd_config -t peach-web.service -s $app-peach-web
+ynh_add_systemd_config -t go-sbot.service -s $app-go-sbot
 
 
 # for yunohost version < 4.2, this is a workaround to replace string variables
@@ -226,9 +226,7 @@ yunohost service add $app --description="$description" --log="/var/log/$app/$app
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --time --weight=1
 
-# Start a systemd service
-ynh_systemd_action --service_name="peach-web.service" --action="start" --log_path="/var/log/$app/$app.log"
-ynh_systemd_action --service_name="go-sbot.service" --action="start" --log_path="/var/log/$app/$app.log"
+start_systemd_services $app
 
 #=================================================
 # SETUP SSOWAT
