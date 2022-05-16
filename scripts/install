@@ -29,7 +29,7 @@ path_url="/"
 is_public=$YNH_APP_ARG_IS_PUBLIC
 #ssb_admin_id=$YNH_APP_ARG_SSB_ADMIN_ID
 password=$YNH_APP_ARG_PASSWORD
-architecture=$(ynh_detect_arch)
+architecture=$YNH_ARCH
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
@@ -185,6 +185,9 @@ ynh_script_progression --message="Configuring log rotation..." --time --weight=1
 
 # Use logrotate to manage application logfile(s)
 ynh_use_logrotate
+
+# touch logfile so it exists
+touch /var/log/$app/$app.log
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST

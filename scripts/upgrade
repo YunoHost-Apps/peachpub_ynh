@@ -23,7 +23,7 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 port=$(ynh_app_setting_get --app=$app --key=port)
 ssbport=$(ynh_app_setting_get --app=$app --key=ssbport)
-architecture=$(ynh_detect_arch)
+architecture=$YNH_ARCH
 
 #=================================================
 # CHECK VERSION
@@ -155,6 +155,9 @@ ynh_script_progression --message="Upgrading logrotate configuration..."  --weigh
 
 # Use logrotate to manage app-specific logfile(s)
 ynh_use_logrotate --non-append
+
+# touch logfile so it exists
+touch /var/log/$app/$app.log
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
