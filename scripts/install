@@ -203,7 +203,7 @@ ynh_script_progression --message="Integrating service in YunoHost..." --time --w
 ###		- As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
 ###		- And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
 
-yunohost service add $app --description="$description" --log="/var/log/$app/$app.log"
+yunohost service add $app --description="$description" --log="/var/log/$app/$app.log"  --needs_exposed_ports $ssbport
 
 ### Additional options starting with 3.8:
 ###
