@@ -150,6 +150,8 @@ chown $app:$app "$datadir/.ssb-go/config.toml"
 ynh_script_progression --message="Configuring a systemd service..."  --weight=1
 
 # Create a dedicated systemd config
+echo "peach_web_service: ${peach_web_service}"
+echo "go_sbot_service: ${go_sbot_service}"
 ynh_add_systemd_config -t peach-web.service -s $peach_web_service
 ynh_add_systemd_config -t go-sbot.service -s $go_sbot_service
 
