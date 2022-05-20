@@ -139,10 +139,11 @@ chown -R $app:www-data "$datadir"
 ynh_script_progression --message="Adding a configuration file for go-sbot" --time --weight=1
 
 ynh_add_config --template="config.toml" --destination="$datadir/.ssb-go/config.toml"
-
 chmod 600 "$datadir/.ssb-go/config.toml"
 chown $app:$app "$datadir/.ssb-go/config.toml"
 
+mkdir -p /etc/sudoers.d/
+ynh_add_config --template="sudoers" --destination="/etc/sudoers.d/$app"
 
 #=================================================
 # SETUP SYSTEMD

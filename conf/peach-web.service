@@ -9,7 +9,9 @@ Group=__APP__
 WorkingDirectory=__FINALPATH__
 Environment="PORT=__PORT__"
 Environment="PEACH_CONFIGDIR=__DATADIR__/config"
-Environment="GOSBOT_DATADIR=__DATADIR__/.ssb-go"
+Environment="PEACH_CONFIG_PATH=__DATADIR__/config/config.yml"
+Environment="GO_SBOT_DATADIR=__DATADIR__/.ssb-go"
+Environment="GO_SBOT_SERVICE=__GO_SBOT_SERVICE__"
 Environment="RUST_LOG=info"
 ExecStart=__FINALPATH__/peach-web
 StandardOutput=append:/var/log/__APP__/__APP__.log
