@@ -29,13 +29,18 @@ path_url="/"
 is_public=$YNH_APP_ARG_IS_PUBLIC
 #ssb_admin_id=$YNH_APP_ARG_SSB_ADMIN_ID
 password=$YNH_APP_ARG_PASSWORD
-architecture=$(ynh_detect_arch)
 app=$YNH_APP_INSTANCE_NAME
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
 ynh_script_progression --message="Validating installation parameters..." --time --weight=1
+
+# Check machine architecture
+if [ $YNH_ARCH == "i386" ] || [ $YNH_ARCH == "armel" ]
+then
+	ynh_die --message="Sorry, but this app can only be installed on a x86, arm64 and armhf bits machine :("
+fi
 
 final_path=/opt/yunohost/$app
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
@@ -97,7 +102,7 @@ ynh_script_progression --message="Setting up source files..." --weight=1
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$final_path" --source_id="$architecture"
+ynh_setup_source --dest_dir="$final_path" --source_id=$YNH_ARCH
 
 # permissions
 chmod 750 "$final_path"
