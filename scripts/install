@@ -31,8 +31,8 @@ is_public=$YNH_APP_ARG_IS_PUBLIC
 password=$YNH_APP_ARG_PASSWORD
 architecture=$YNH_ARCH
 app=$YNH_APP_INSTANCE_NAME
-peach_web_service=$app-peach-web.service
-go_sbot_service=$app-go-sbot.service
+peach_web_service=$app-peach-web
+go_sbot_service=$app-go-sbot
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
@@ -160,13 +160,13 @@ ynh_add_systemd_config -t go-sbot.service -s $go_sbot_service
 
 # for yunohost version < 4.2, this is a workaround to replace string variables
 ynh_script_progression --message="String replacing systemd service with $datadir"  --weight=1
-systemd_file="/etc/systemd/system/$peach_web_service"
+systemd_file="/etc/systemd/system/$peach_web_service.service"
 ynh_replace_string --match_string=__DATADIR__ --replace_string=$datadir --target_file=$systemd_file
 ynh_replace_string --match_string=__FINALPATH__ --replace_string=$final_path --target_file=$systemd_file
 ynh_replace_string --match_string=__PORT__ --replace_string=$port --target_file=$systemd_file
 ynh_replace_string --match_string=__DOMAIN__ --replace_string=$domain --target_file=$systemd_file
 ynh_replace_string --match_string=__SSBPORT__ --replace_string=$ssbport --target_file=$systemd_file
-systemd_file="/etc/systemd/system/$go_sbot_service"
+systemd_file="/etc/systemd/system/$go_sbot_service.service"
 ynh_replace_string --match_string=__DATADIR__ --replace_string=$datadir --target_file=$systemd_file
 ynh_replace_string --match_string=__FINALPATH__ --replace_string=$final_path --target_file=$systemd_file
 ynh_replace_string --match_string=__PORT__ --replace_string=$port --target_file=$systemd_file
