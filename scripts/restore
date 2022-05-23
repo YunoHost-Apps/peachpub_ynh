@@ -33,6 +33,8 @@ path_url=$(ynh_app_setting_get --app=$app --key=path)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 ssbport=$(ynh_app_setting_get --app=$app --key=ssbport)
 datadir=$(ynh_app_setting_get --app=$app --key=datadir)
+peach_web_service=$(ynh_app_setting_get --app=$app --key=peach_web_service)
+go_sbot_service=$(ynh_app_setting_get --app=$app --key=go_sbot_service)
 
 #=================================================
 # CHECK IF THE APP CAN BE RESTORED
@@ -107,10 +109,10 @@ ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $ssbport
 #=================================================
 ynh_script_progression --message="Restoring the systemd configuration..."  --weight=1
 
-ynh_restore_file --origin_path="/etc/systemd/system/$app-peach-web.service"
-ynh_restore_file --origin_path="/etc/systemd/system/$app-go-sbot.service"
-systemctl enable $app-peach-web.service --quiet
-systemctl enable $app-go-sbot.service --quiet
+ynh_restore_file --origin_path="/etc/systemd/system/$peach_web_service.service"
+ynh_restore_file --origin_path="/etc/systemd/system/$go_sbot_service.service"
+systemctl enable $peach_web_service.service --quiet
+systemctl enable $go_sbot_service.service --quiet
 
 #=================================================
 # RESTORE THE LOGROTATE CONFIGURATION

@@ -52,6 +52,8 @@ ynh_script_progression --message="Storing installation settings..." --time --wei
 
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=peach_web_service --value=$peach_web_service
+ynh_app_setting_set --app=$app --key=go_sbot_service --value=$go_sbot_service
 #ynh_app_setting_set --app=$app --key=ssb_admin_id --value=$ssb_admin_id
 
 #=================================================
