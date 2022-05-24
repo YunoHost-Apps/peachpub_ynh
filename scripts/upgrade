@@ -24,6 +24,8 @@ datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 port=$(ynh_app_setting_get --app=$app --key=port)
 ssbport=$(ynh_app_setting_get --app=$app --key=ssbport)
 architecture=$YNH_ARCH
+peach_web_service=$(ynh_app_setting_get --app=$app --key=peach_web_service)
+go_sbot_service=$(ynh_app_setting_get --app=$app --key=go_sbot_service)
 
 #=================================================
 # CHECK VERSION
@@ -58,8 +60,8 @@ ynh_abort_if_errors
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..."  --weight=1
 
-ynh_systemd_action --service_name=$app-peach-web.service --action="stop" --log_path="/var/log/$app/$app.log"
-ynh_systemd_action --service_name=$app-go-sbot.service --action="stop" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$peach_web_service.service" --action="stop" --log_path="/var/log/$app/$app.log"
+ynh_systemd_action --service_name="$go_sbot_service.service" --action="stop" --log_path="/var/log/$app/$app.log"
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -145,18 +147,18 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_script_progression --message="Upgrading systemd configuration..."  --weight=1
 
 # Create a dedicated systemd config
-ynh_add_systemd_config -t $app-peach-web.service -s peach-web
-ynh_add_systemd_config -t $app-go-sbot.service -s go-sbot
+ynh_add_systemd_config -t "$peach_web_service.service" -s peach-web
+ynh_add_systemd_config -t "$go_sbot_service.service" -s go-sbot
 
 # for yunohost version < 4.2, this is a workaround to replace string variables
 ynh_script_progression --message="String replacing systemd service with $datadir"  --weight=1
-systemd_file="/etc/systemd/system/peach-web.service"
+systemd_file="/etc/systemd/system/$peach_web_service.service"
 ynh_replace_string --match_string=__DATADIR__ --replace_string=$datadir --target_file=$systemd_file
 ynh_replace_string --match_string=__FINALPATH__ --replace_string=$final_path --target_file=$systemd_file
 ynh_replace_string --match_string=__PORT__ --replace_string=$port --target_file=$systemd_file
 ynh_replace_string --match_string=__DOMAIN__ --replace_string=$domain --target_file=$systemd_file
 ynh_replace_string --match_string=__SSBPORT__ --replace_string=$ssbport --target_file=$systemd_file
-systemd_file="/etc/systemd/system/go-sbot.service"
+systemd_file="/etc/systemd/system/$go_sbot_service.service"
 ynh_replace_string --match_string=__DATADIR__ --replace_string=$datadir --target_file=$systemd_file
 ynh_replace_string --match_string=__FINALPATH__ --replace_string=$final_path --target_file=$systemd_file
 ynh_replace_string --match_string=__PORT__ --replace_string=$port --target_file=$systemd_file

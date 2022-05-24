@@ -243,7 +243,7 @@ ynh_script_progression --message="Configuring permissions..."  --weight=1
 
 # for normal operation of the app, is_public should equal True,
 # and all visitors should be able to access the /admin section, with or without SSO
-# as go-ssb-room has its own authentication and user-system
+# as peachpub has its own authentication and user-system
 # which operates outside of yunohost SSO
 
 # Make app public if necessary
