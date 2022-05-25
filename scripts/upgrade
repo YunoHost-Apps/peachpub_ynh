@@ -147,8 +147,8 @@ ynh_install_app_dependencies $pkg_dependencies
 ynh_script_progression --message="Upgrading systemd configuration..."  --weight=1
 
 # Create a dedicated systemd config
-ynh_add_systemd_config -t "$peach_web_service.service" -s peach-web
-ynh_add_systemd_config -t "$go_sbot_service.service" -s go-sbot
+ynh_add_systemd_config -t "peach-web.service" -s $peach_web_service
+ynh_add_systemd_config -t "go-sbot.service" -s $go_sbot_service
 
 # for yunohost version < 4.2, this is a workaround to replace string variables
 ynh_script_progression --message="String replacing systemd service with $datadir"  --weight=1

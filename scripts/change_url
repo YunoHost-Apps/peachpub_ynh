@@ -101,8 +101,8 @@ then
 	# Store file checksum for the new config file location
 	ynh_store_file_checksum --file="/etc/nginx/conf.d/$new_domain.d/$app.conf"
 	# replace domain in systemd service file
-	ynh_replace_string --match_string=$old_domain --replace_string=$new_domain --target_file=/etc/systemd/system/$peach_web_service.service
-	ynh_replace_string --match_string=$old_domain --replace_string=$new_domain --target_file=/etc/systemd/system/$go_sbot_service.service
+	ynh_replace_string --match_string=$old_domain --replace_string=$new_domain --target_file="/etc/systemd/system/$peach_web_service.service"
+	ynh_replace_string --match_string=$old_domain --replace_string=$new_domain --target_file="/etc/systemd/system/$go_sbot_service.service"
 	systemctl daemon-reload
 fi
 
