@@ -177,6 +177,13 @@ ynh_replace_string --match_string=__SSBPORT__ --replace_string=$ssbport --target
 systemctl daemon-reload
 
 #=================================================
+# OPEN SSBPORT
+#=================================================
+# Open the ssbport to the public
+ynh_script_progression --message="Configuring firewall..."  --weight=1
+ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $ssbport
+
+#=================================================
 # GENERIC FINALIZATION
 #=================================================
 # SETUP LOGROTATE
@@ -200,7 +207,7 @@ touch /var/log/$app/$app.log
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
+ynh_script_progression --message="Integrating service in YunoHost with ssbport $ssbport..." --time --weight=1
 
 ### `yunohost service add` integrates a service in YunoHost. It then gets
 ### displayed in the admin interface and through the others `yunohost service` commands.
@@ -211,7 +218,8 @@ ynh_script_progression --message="Integrating service in YunoHost..." --time --w
 ###		- As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
 ###		- And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
 
-yunohost service add $app --description="$description" --log="/var/log/$app/$app.log"  --needs_exposed_ports $ssbport
+yunohost service add $go_sbot_service --description="$description" --log="/var/log/$app/$app.log"  --needs_exposed_ports $ssbport
+yunohost service add $peach_web_service --description="$description" --log="/var/log/$app/$app.log"  --needs_exposed_ports $ssbport
 
 ### Additional options starting with 3.8:
 ###

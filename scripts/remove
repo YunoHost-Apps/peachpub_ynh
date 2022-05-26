@@ -109,6 +109,7 @@ ynh_script_progression --message="Removing various files..."  --weight=1
 
 # Remove the log files
 ynh_secure_remove --file="/var/log/$app"
+ynh_secure_remove --file="/etc/sudoers.d/$app"
 
 #=================================================
 # GENERIC FINALIZATION

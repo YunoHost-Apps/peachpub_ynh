@@ -20,6 +20,8 @@ start_systemd_services () {
 
     # restart peach-web (this is hack, but it avoids an unexplained 502 error)
     ynh_systemd_action --service_name="$1-peach-web.service" --action="restart" --log_path="/var/log/$1/$1.log"
+    # restart go-sbot (this is hack, but it helps go-sbot populate everything on first boot)
+    ynh_systemd_action --service_name="$1-go-sbot.service" --action="restart" --log_path="/var/log/$1/$1.log"
 }
 
 stop_systemd_services () {
