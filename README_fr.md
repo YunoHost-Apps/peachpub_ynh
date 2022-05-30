@@ -5,7 +5,7 @@ It shall NOT be edited by hand.
 
 # PeachPub pour YunoHost
 
-[![Niveau d'intégration](https://dash.yunohost.org/integration/peachpub.svg)](https://dash.yunohost.org/appci/app/peachpub) ![Status du fonctionnement](https://ci-apps.yunohost.org/ci/badges/peachpub.status.svg) ![Status de maintenance](https://ci-apps.yunohost.org/ci/badges/peachpub.maintain.svg)  
+[![Niveau d'intégration](https://dash.yunohost.org/integration/peachpub.svg)](https://dash.yunohost.org/appci/app/peachpub) ![Statut du fonctionnement](https://ci-apps.yunohost.org/ci/badges/peachpub.status.svg) ![Statut de maintenance](https://ci-apps.yunohost.org/ci/badges/peachpub.maintain.svg)  
 [![Installer PeachPub avec YunoHost](https://install-app.yunohost.org/install-with-yunohost.svg)](https://install-app.yunohost.org/?app=peachpub)
 
 *[Read this readme in english.](./README.md)*
