@@ -1,0 +1,1 @@
+__APP__ ALL=(ALL) NOPASSWD: /usr/bin/systemctl start __GO_SBOT_SERVICE__, /usr/bin/systemctl stop __GO_SBOT_SERVICE__, /usr/bin/systemctl restart __GO_SBOT_SERVICE__, /usr/bin/systemctl enable __GO_SBOT_SERVICE__, /usr/bin/systemctl disable __GO_SBOT_SERVICE__
