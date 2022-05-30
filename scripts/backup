@@ -65,10 +65,15 @@ ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 #=================================================
 # SPECIFIC BACKUP
 #=================================================
+
+ynh_backup --src_path="/etc/sudoers.d/$app"
+
+#=================================================
 # BACKUP LOGROTATE
 #=================================================
 
 ynh_backup --src_path="/etc/logrotate.d/$app"
+
 
 #=================================================
 # BACKUP SYSTEMD
