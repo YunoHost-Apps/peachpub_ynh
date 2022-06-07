@@ -3,7 +3,7 @@ debugdir = ""
 shscap = "1KHLiKZvAvjbY1ziZEHMXawbCEIM6qwjCDm3VYRan/s="
 hmac = ""
 hops = 2
-lis = "127.0.0.1:__SSBPORT__"
+lis = ":__SSBPORT__"
 wslis = ":8987"
 debuglis = "localhost:6078"
 localadv = true

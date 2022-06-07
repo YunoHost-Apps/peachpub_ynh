@@ -3,7 +3,7 @@
     "id": "peachpub",
     "packaging_format": 1,
     "description": {
-        "en": "Secure Scuttlebutt pub with a web interface for pub management, for YunoHost."
+        "en": "Secure Scuttlebutt pub with a web interface for pub management."
     },
     "version": "0.6.13~ynh3",
     "url": "https://docs.peachcloud.org",

@@ -29,13 +29,21 @@ path_url="/"
 is_public=$YNH_APP_ARG_IS_PUBLIC
 #ssb_admin_id=$YNH_APP_ARG_SSB_ADMIN_ID
 password=$YNH_APP_ARG_PASSWORD
-architecture=$(ynh_detect_arch)
+architecture=$YNH_ARCH
 app=$YNH_APP_INSTANCE_NAME
+peach_web_service=$app-peach-web
+go_sbot_service=$app-go-sbot
 
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
 ynh_script_progression --message="Validating installation parameters..." --time --weight=1
+
+# Check machine architecture
+if [ $YNH_ARCH == "i386" ] || [ $YNH_ARCH == "armel" ]
+then
+	ynh_die --message="Sorry, but this app can only be installed on a x86, arm64 and armhf bits machine :("
+fi
 
 final_path=/opt/yunohost/$app
 test ! -e "$final_path" || ynh_die --message="This path already contains a folder"
@@ -50,6 +58,8 @@ ynh_script_progression --message="Storing installation settings..." --time --wei
 
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
+ynh_app_setting_set --app=$app --key=peach_web_service --value=$peach_web_service
+ynh_app_setting_set --app=$app --key=go_sbot_service --value=$go_sbot_service
 #ynh_app_setting_set --app=$app --key=ssb_admin_id --value=$ssb_admin_id
 
 #=================================================
@@ -97,7 +107,7 @@ ynh_script_progression --message="Setting up source files..." --weight=1
 
 ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
-ynh_setup_source --dest_dir="$final_path" --source_id="$architecture"
+ynh_setup_source --dest_dir="$final_path" --source_id=$YNH_ARCH
 
 # permissions
 chmod 750 "$final_path"
@@ -137,10 +147,11 @@ chown -R $app:www-data "$datadir"
 ynh_script_progression --message="Adding a configuration file for go-sbot" --time --weight=1
 
 ynh_add_config --template="config.toml" --destination="$datadir/.ssb-go/config.toml"
-
 chmod 600 "$datadir/.ssb-go/config.toml"
 chown $app:$app "$datadir/.ssb-go/config.toml"
 
+mkdir -p /etc/sudoers.d/
+ynh_add_config --template="sudoers" --destination="/etc/sudoers.d/$app"
 
 #=================================================
 # SETUP SYSTEMD
@@ -148,25 +159,35 @@ chown $app:$app "$datadir/.ssb-go/config.toml"
 ynh_script_progression --message="Configuring a systemd service..."  --weight=1
 
 # Create a dedicated systemd config
-ynh_add_systemd_config -t peach-web.service -s peach-web
-ynh_add_systemd_config -t go-sbot.service -s go-sbot
+ynh_script_progression --message="peach_web_service: ${peach_web_service}" --time --weight=1
+ynh_script_progression --message="go_sbot_service: ${go_sbot_service}" --time --weight=1
+
+ynh_add_systemd_config -t peach-web.service -s $peach_web_service
+ynh_add_systemd_config -t go-sbot.service -s $go_sbot_service
 
 
 # for yunohost version < 4.2, this is a workaround to replace string variables
-ynh_script_progression --message="String replacing systemd service with $datadir"  --weight=1
-systemd_file="/etc/systemd/system/peach-web.service"
+ynh_script_progression --message="String replacing systemd service"  --weight=1
+systemd_file="/etc/systemd/system/$peach_web_service.service"
 ynh_replace_string --match_string=__DATADIR__ --replace_string=$datadir --target_file=$systemd_file
 ynh_replace_string --match_string=__FINALPATH__ --replace_string=$final_path --target_file=$systemd_file
 ynh_replace_string --match_string=__PORT__ --replace_string=$port --target_file=$systemd_file
 ynh_replace_string --match_string=__DOMAIN__ --replace_string=$domain --target_file=$systemd_file
 ynh_replace_string --match_string=__SSBPORT__ --replace_string=$ssbport --target_file=$systemd_file
-systemd_file="/etc/systemd/system/go-sbot.service"
+systemd_file="/etc/systemd/system/$go_sbot_service.service"
 ynh_replace_string --match_string=__DATADIR__ --replace_string=$datadir --target_file=$systemd_file
 ynh_replace_string --match_string=__FINALPATH__ --replace_string=$final_path --target_file=$systemd_file
 ynh_replace_string --match_string=__PORT__ --replace_string=$port --target_file=$systemd_file
 ynh_replace_string --match_string=__DOMAIN__ --replace_string=$domain --target_file=$systemd_file
 ynh_replace_string --match_string=__SSBPORT__ --replace_string=$ssbport --target_file=$systemd_file
 systemctl daemon-reload
+
+#=================================================
+# OPEN SSBPORT
+#=================================================
+# Open the ssbport to the public
+ynh_script_progression --message="Configuring firewall..."  --weight=1
+ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $ssbport
 
 #=================================================
 # GENERIC FINALIZATION
@@ -186,10 +207,13 @@ ynh_script_progression --message="Configuring log rotation..." --time --weight=1
 # Use logrotate to manage application logfile(s)
 ynh_use_logrotate
 
+# touch logfile so it exists
+touch /var/log/$app/$app.log
+
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost..." --time --weight=1
+ynh_script_progression --message="Integrating service in YunoHost with ssbport $ssbport..." --time --weight=1
 
 ### `yunohost service add` integrates a service in YunoHost. It then gets
 ### displayed in the admin interface and through the others `yunohost service` commands.
@@ -200,7 +224,8 @@ ynh_script_progression --message="Integrating service in YunoHost..." --time --w
 ###		- As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
 ###		- And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
 
-yunohost service add $app --description="$description" --log="/var/log/$app/$app.log"
+yunohost service add $go_sbot_service --description="$description" --log="/var/log/$app/$app.log"  --needs_exposed_ports $ssbport
+yunohost service add $peach_web_service --description="$description" --log="/var/log/$app/$app.log"  --needs_exposed_ports $ssbport
 
 ### Additional options starting with 3.8:
 ###
@@ -223,9 +248,7 @@ yunohost service add $app --description="$description" --log="/var/log/$app/$app
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --time --weight=1
 
-# Start a systemd service
-ynh_systemd_action --service_name="peach-web.service" --action="start" --log_path="/var/log/$app/$app.log"
-ynh_systemd_action --service_name="go-sbot.service" --action="start" --log_path="/var/log/$app/$app.log"
+start_systemd_services $app
 
 #=================================================
 # SETUP SSOWAT
@@ -234,7 +257,7 @@ ynh_script_progression --message="Configuring permissions..."  --weight=1
 
 # for normal operation of the app, is_public should equal True,
 # and all visitors should be able to access the /admin section, with or without SSO
-# as go-ssb-room has its own authentication and user-system
+# as peachpub has its own authentication and user-system
 # which operates outside of yunohost SSO
 
 # Make app public if necessary
