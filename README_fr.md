@@ -27,7 +27,7 @@ For more documentation about PeachPub, visit https://docs.peachcloud.org.
 - Invite creation 
 - Update pub profile and description
 
-**Version incluse :** 0.6.13~ynh3
+**Version incluse :** 0.6.13~ynh4
 
 **Démo :** https://demo.peachcloud.org
 
