@@ -256,7 +256,7 @@ start_systemd_services $app
 ynh_script_progression --message="Configuring permissions..."  --weight=1
 
 # for normal operation of the app, is_public should equal True,
-# and all visitors should be able to access the /admin section, with or without SSO
+# and all visitors should be able to access the admin section, with or without SSO
 # as peachpub has its own authentication and user-system
 # which operates outside of yunohost SSO
 
