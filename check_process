@@ -6,10 +6,10 @@
 		is_public=1
 		password="1Strong-Password"
 		ssb_admin_id="@5Pt3dKy2HTJ0mWuS78oIiklIX0gBz6BTfEnXsbvke9c=.ed25519"
-		port="666"
+		port="222"
 	; Checks
 		pkg_linter=1
-		setup_sub_dir=0
+		setup_sub_dir=1
 		setup_root=1
 		setup_nourl=0
 		setup_private=1

@@ -165,21 +165,6 @@ ynh_script_progression --message="go_sbot_service: ${go_sbot_service}" --time --
 ynh_add_systemd_config -t peach-web.service -s $peach_web_service
 ynh_add_systemd_config -t go-sbot.service -s $go_sbot_service
 
-
-# for yunohost version < 4.2, this is a workaround to replace string variables
-ynh_script_progression --message="String replacing systemd service"  --weight=1
-systemd_file="/etc/systemd/system/$peach_web_service.service"
-ynh_replace_string --match_string=__DATADIR__ --replace_string=$datadir --target_file=$systemd_file
-ynh_replace_string --match_string=__FINALPATH__ --replace_string=$final_path --target_file=$systemd_file
-ynh_replace_string --match_string=__PORT__ --replace_string=$port --target_file=$systemd_file
-ynh_replace_string --match_string=__DOMAIN__ --replace_string=$domain --target_file=$systemd_file
-ynh_replace_string --match_string=__SSBPORT__ --replace_string=$ssbport --target_file=$systemd_file
-systemd_file="/etc/systemd/system/$go_sbot_service.service"
-ynh_replace_string --match_string=__DATADIR__ --replace_string=$datadir --target_file=$systemd_file
-ynh_replace_string --match_string=__FINALPATH__ --replace_string=$final_path --target_file=$systemd_file
-ynh_replace_string --match_string=__PORT__ --replace_string=$port --target_file=$systemd_file
-ynh_replace_string --match_string=__DOMAIN__ --replace_string=$domain --target_file=$systemd_file
-ynh_replace_string --match_string=__SSBPORT__ --replace_string=$ssbport --target_file=$systemd_file
 systemctl daemon-reload
 
 #=================================================
@@ -194,7 +179,7 @@ ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $ssbport
 #=================================================
 # SETUP LOGROTATE
 #=================================================
-ynh_script_progression --message="Configuring log rotation..." --time --weight=1
+ynh_script_progression --message="Configuring log rotation..." --weight=1
 
 ### `ynh_use_logrotate` is used to configure a logrotate configuration for the logs of this app.
 ### Use this helper only if there is effectively a log file for this app.
@@ -213,7 +198,7 @@ touch /var/log/$app/$app.log
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost with ssbport $ssbport..." --time --weight=1
+ynh_script_progression --message="Integrating service in YunoHost with ssbport $ssbport..." --weight=1
 
 ### `yunohost service add` integrates a service in YunoHost. It then gets
 ### displayed in the admin interface and through the others `yunohost service` commands.
@@ -246,7 +231,7 @@ yunohost service add $peach_web_service --description="$description" --log="/var
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --time --weight=1
+ynh_script_progression --message="Starting a systemd service..." --weight=1
 
 start_systemd_services $app
 
@@ -271,7 +256,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --time --weight=1
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -279,4 +264,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed" --time --last
+ynh_script_progression --message="Installation of $app completed" --last

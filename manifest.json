@@ -42,7 +42,10 @@
             {
                 "name": "is_public",
                 "type": "boolean",
-                "default": true
+                "default": true,
+                "help": {
+                    "en": "If private, only yunohost users can use this app."
+                }
             },
             {
                 "name": "password",

@@ -21,6 +21,8 @@ port=$(ynh_app_setting_get --app=$app --key=port)
 ssbport=$(ynh_app_setting_get --app=$app --key=ssbport)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 datadir=$(ynh_app_setting_get --app=$app --key=datadir)
+peach_web_service=$(ynh_app_setting_get --app=$app --key=peach_web_service)
+go_sbot_service=$(ynh_app_setting_get --app=$app --key=go_sbot_service)
 
 #=================================================
 # STANDARD REMOVE
@@ -29,10 +31,18 @@ datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 #=================================================
 
 # Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
-if ynh_exec_warn_less yunohost service status $app >/dev/null
+if ynh_exec_warn_less yunohost service status $go_sbot_service >/dev/null
 then
-	ynh_script_progression --message="Removing $app service integration..."  --weight=1
-	yunohost service remove $app
+	ynh_script_progression --message="Removing $go_sbot_service service integration..."  --weight=1
+	yunohost service remove $go_sbot_service
+fi
+
+
+# Remove the service from the list of services known by YunoHost (added from `yunohost service add`)
+if ynh_exec_warn_less yunohost service status $peach_web_service >/dev/null
+then
+	ynh_script_progression --message="Removing $peach_web_service service integration..."  --weight=1
+	yunohost service remove $peach_web_service
 fi
 
 #=================================================
