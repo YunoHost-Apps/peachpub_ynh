@@ -68,27 +68,6 @@ ynh_systemd_action --service_name="$go_sbot_service.service" --action="stop" --l
 #=================================================
 ynh_script_progression --message="Ensuring downward compatibility..."  --weight=1
 
-#
-# N.B. : the followings setting migrations snippets are provided as *EXAMPLES*
-# of what you may want to do in some cases (e.g. a setting was not defined on
-# some legacy installs and you therefore want to initiaze stuff during upgrade)
-#
-
-# If db_name doesn't exist, create it
-#if [ -z "$db_name" ]; then
-#	db_name=$(ynh_sanitize_dbid --db_name=$app)
-#	ynh_app_setting_set --app=$app --key=db_name --value=$db_name
-#fi
-
-# If final_path doesn't exist, create it
-#if [ -z "$final_path" ]; then
-#	final_path=/var/www/$app
-#	ynh_app_setting_set --app=$app --key=final_path --value=$final_path
-#fi
-
-### If nobody installed your app before 4.1,
-### then you may safely remove these lines
-
 # Cleaning legacy permissions
 if ynh_legacy_permissions_exists; then
 	ynh_legacy_permissions_delete_all
@@ -150,20 +129,6 @@ ynh_script_progression --message="Upgrading systemd configuration..."  --weight=
 ynh_add_systemd_config -t "peach-web.service" -s $peach_web_service
 ynh_add_systemd_config -t "go-sbot.service" -s $go_sbot_service
 
-# for yunohost version < 4.2, this is a workaround to replace string variables
-ynh_script_progression --message="String replacing systemd service with $datadir"  --weight=1
-systemd_file="/etc/systemd/system/$peach_web_service.service"
-ynh_replace_string --match_string=__DATADIR__ --replace_string=$datadir --target_file=$systemd_file
-ynh_replace_string --match_string=__FINALPATH__ --replace_string=$final_path --target_file=$systemd_file
-ynh_replace_string --match_string=__PORT__ --replace_string=$port --target_file=$systemd_file
-ynh_replace_string --match_string=__DOMAIN__ --replace_string=$domain --target_file=$systemd_file
-ynh_replace_string --match_string=__SSBPORT__ --replace_string=$ssbport --target_file=$systemd_file
-systemd_file="/etc/systemd/system/$go_sbot_service.service"
-ynh_replace_string --match_string=__DATADIR__ --replace_string=$datadir --target_file=$systemd_file
-ynh_replace_string --match_string=__FINALPATH__ --replace_string=$final_path --target_file=$systemd_file
-ynh_replace_string --match_string=__PORT__ --replace_string=$port --target_file=$systemd_file
-ynh_replace_string --match_string=__DOMAIN__ --replace_string=$domain --target_file=$systemd_file
-ynh_replace_string --match_string=__SSBPORT__ --replace_string=$ssbport --target_file=$systemd_file
 systemctl daemon-reload
 
 
@@ -194,7 +159,6 @@ yunohost service add $peach_web_service --description="$description" --log="/var
 ynh_script_progression --message="Starting a systemd service..."  --weight=1
 
 start_systemd_services $app
-
 
 #=================================================
 # RELOAD NGINX

@@ -37,7 +37,7 @@ go_sbot_service=$app-go-sbot
 #=================================================
 # CHECK IF THE APP CAN BE INSTALLED WITH THESE ARGS
 #=================================================
-ynh_script_progression --message="Validating installation parameters..." --time --weight=1
+ynh_script_progression --message="Validating installation parameters..." --weight=1
 
 # Check machine architecture
 if [ $YNH_ARCH == "i386" ] || [ $YNH_ARCH == "armel" ]
@@ -54,7 +54,7 @@ ynh_webpath_register --app=$app --domain=$domain --path_url=$path_url
 #=================================================
 # STORE SETTINGS FROM MANIFEST
 #=================================================
-ynh_script_progression --message="Storing installation settings..." --time --weight=1
+ynh_script_progression --message="Storing installation settings..." --weight=1
 
 ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
@@ -67,7 +67,7 @@ ynh_app_setting_set --app=$app --key=go_sbot_service --value=$go_sbot_service
 #=================================================
 # FIND AND OPEN A PORT
 #=================================================
-ynh_script_progression --message="Finding an available port..." --time --weight=1
+ynh_script_progression --message="Finding an available port..." --weight=1
 
 # Find an available port
 port=$(ynh_find_port --port=8095)
@@ -80,7 +80,7 @@ ynh_app_setting_set --app=$app --key=ssbport --value=$ssbport
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
-ynh_script_progression --message="Installing dependencies..." --time --weight=1
+ynh_script_progression --message="Installing dependencies..." --weight=1
 
 ### `ynh_install_app_dependencies` allows you to add any "apt" dependencies to the package.
 ### Those deb packages will be installed as dependencies of this package.
@@ -95,7 +95,7 @@ ynh_install_app_dependencies $pkg_dependencies
 #=================================================
 # CREATE DEDICATED USER
 #=================================================
-ynh_script_progression --message="Configuring system user..." --time --weight=1
+ynh_script_progression --message="Configuring system user..." --weight=1
 
 # Create a system user
 ynh_system_user_create --username=$app --home_dir="$final_path"
@@ -117,7 +117,7 @@ chown -R $app:www-data "$final_path"
 #=================================================
 # NGINX CONFIGURATION
 #=================================================
-ynh_script_progression --message="Configuring NGINX web server..." --time --weight=1
+ynh_script_progression --message="Configuring NGINX web server..." --weight=1
 
 ### `ynh_add_nginx_config` will use the file conf/nginx.conf
 
@@ -144,7 +144,7 @@ chown -R $app:www-data "$datadir"
 #=================================================
 # ADD A CONFIGURATION
 #=================================================
-ynh_script_progression --message="Adding a configuration file for go-sbot" --time --weight=1
+ynh_script_progression --message="Adding a configuration file for go-sbot" --weight=1
 
 ynh_add_config --template="config.toml" --destination="$datadir/.ssb-go/config.toml"
 chmod 600 "$datadir/.ssb-go/config.toml"
@@ -159,27 +159,12 @@ ynh_add_config --template="sudoers" --destination="/etc/sudoers.d/$app"
 ynh_script_progression --message="Configuring a systemd service..."  --weight=1
 
 # Create a dedicated systemd config
-ynh_script_progression --message="peach_web_service: ${peach_web_service}" --time --weight=1
-ynh_script_progression --message="go_sbot_service: ${go_sbot_service}" --time --weight=1
+ynh_script_progression --message="peach_web_service: ${peach_web_service}" --weight=1
+ynh_script_progression --message="go_sbot_service: ${go_sbot_service}" --weight=1
 
 ynh_add_systemd_config -t peach-web.service -s $peach_web_service
 ynh_add_systemd_config -t go-sbot.service -s $go_sbot_service
 
-
-# for yunohost version < 4.2, this is a workaround to replace string variables
-ynh_script_progression --message="String replacing systemd service"  --weight=1
-systemd_file="/etc/systemd/system/$peach_web_service.service"
-ynh_replace_string --match_string=__DATADIR__ --replace_string=$datadir --target_file=$systemd_file
-ynh_replace_string --match_string=__FINALPATH__ --replace_string=$final_path --target_file=$systemd_file
-ynh_replace_string --match_string=__PORT__ --replace_string=$port --target_file=$systemd_file
-ynh_replace_string --match_string=__DOMAIN__ --replace_string=$domain --target_file=$systemd_file
-ynh_replace_string --match_string=__SSBPORT__ --replace_string=$ssbport --target_file=$systemd_file
-systemd_file="/etc/systemd/system/$go_sbot_service.service"
-ynh_replace_string --match_string=__DATADIR__ --replace_string=$datadir --target_file=$systemd_file
-ynh_replace_string --match_string=__FINALPATH__ --replace_string=$final_path --target_file=$systemd_file
-ynh_replace_string --match_string=__PORT__ --replace_string=$port --target_file=$systemd_file
-ynh_replace_string --match_string=__DOMAIN__ --replace_string=$domain --target_file=$systemd_file
-ynh_replace_string --match_string=__SSBPORT__ --replace_string=$ssbport --target_file=$systemd_file
 systemctl daemon-reload
 
 #=================================================
@@ -194,7 +179,7 @@ ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $ssbport
 #=================================================
 # SETUP LOGROTATE
 #=================================================
-ynh_script_progression --message="Configuring log rotation..." --time --weight=1
+ynh_script_progression --message="Configuring log rotation..." --weight=1
 
 ### `ynh_use_logrotate` is used to configure a logrotate configuration for the logs of this app.
 ### Use this helper only if there is effectively a log file for this app.
@@ -213,7 +198,7 @@ touch /var/log/$app/$app.log
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
-ynh_script_progression --message="Integrating service in YunoHost with ssbport $ssbport..." --time --weight=1
+ynh_script_progression --message="Integrating service in YunoHost with ssbport $ssbport..." --weight=1
 
 ### `yunohost service add` integrates a service in YunoHost. It then gets
 ### displayed in the admin interface and through the others `yunohost service` commands.
@@ -246,7 +231,7 @@ yunohost service add $peach_web_service --description="$description" --log="/var
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression --message="Starting a systemd service..." --time --weight=1
+ynh_script_progression --message="Starting a systemd service..." --weight=1
 
 start_systemd_services $app
 
@@ -256,7 +241,7 @@ start_systemd_services $app
 ynh_script_progression --message="Configuring permissions..."  --weight=1
 
 # for normal operation of the app, is_public should equal True,
-# and all visitors should be able to access the /admin section, with or without SSO
+# and all visitors should be able to access the admin section, with or without SSO
 # as peachpub has its own authentication and user-system
 # which operates outside of yunohost SSO
 
@@ -271,7 +256,7 @@ fi
 #=================================================
 # RELOAD NGINX
 #=================================================
-ynh_script_progression --message="Reloading NGINX web server..." --time --weight=1
+ynh_script_progression --message="Reloading NGINX web server..." --weight=1
 
 ynh_systemd_action --service_name=nginx --action=reload
 
@@ -279,4 +264,4 @@ ynh_systemd_action --service_name=nginx --action=reload
 # END OF SCRIPT
 #=================================================
 
-ynh_script_progression --message="Installation of $app completed" --time --last
+ynh_script_progression --message="Installation of $app completed" --last
