@@ -5,7 +5,7 @@
     "description": {
         "en": "Secure Scuttlebutt pub with a web interface for pub management."
     },
-    "version": "0.6.13~ynh4",
+    "version": "0.6.17~ynh4",
     "url": "https://docs.peachcloud.org",
     "upstream": {
         "license": "AGPL-3.0",
@@ -42,7 +42,10 @@
             {
                 "name": "is_public",
                 "type": "boolean",
-                "default": true
+                "default": true,
+                "help": {
+                    "en": "If private, only yunohost users can use this app."
+                }
             },
             {
                 "name": "password",
