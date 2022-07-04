@@ -5,7 +5,7 @@
     "description": {
         "en": "Secure Scuttlebutt pub with a web interface for pub management."
     },
-    "version": "0.6.19~ynh5",
+    "version": "0.6.19~ynh6",
     "url": "https://docs.peachcloud.org",
     "upstream": {
         "license": "AGPL-3.0",
