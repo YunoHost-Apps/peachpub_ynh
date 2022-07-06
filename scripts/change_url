@@ -23,6 +23,8 @@ app=$YNH_APP_INSTANCE_NAME
 peach_web_service=$(ynh_app_setting_get --app=$app --key=peach_web_service)
 go_sbot_service=$(ynh_app_setting_get --app=$app --key=go_sbot_service)
 datadir=$(ynh_app_setting_get --app=$app --key=datadir)
+final_path=$(ynh_app_setting_get --app=$app --key=final_path)
+ssbport=$(ynh_app_setting_get --app=$app --key=ssbport)
 
 #=================================================
 # LOAD SETTINGS
@@ -107,6 +109,8 @@ then
 	ynh_replace_string --match_string=$old_domain --replace_string=$new_domain --target_file="/etc/systemd/system/$peach_web_service.service"
 	ynh_replace_string --match_string=$old_domain --replace_string=$new_domain --target_file="/etc/systemd/system/$go_sbot_service.service"
 	systemctl daemon-reload
+	# publish new domain with the sbot
+	publish_address $domain $ssbport $final_path/peach-config
 fi
 
 #=================================================
