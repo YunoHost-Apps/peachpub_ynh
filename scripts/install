@@ -163,7 +163,7 @@ ynh_add_config --template="sudoers" --destination="/etc/sudoers.d/$app"
 #=================================================
 ynh_script_progression --message="Configuring admin password" --weight=1
 escaped_password=$(printf "%q" $password)
-PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config changepassword -p $escaped_password
+PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config change-password -p $escaped_password
 
 #=================================================
 # SETUP SYSTEMD
@@ -250,7 +250,7 @@ start_systemd_services $app
 #=================================================
 # CONFIGURE DOMAIN AFTER SBOT IS RUNNING
 #=================================================
-publish_address $domain $ssbport $final_path/peach-config
+PEACH_CONFIG_PATH=$datadir/config/config.yml publish_address $domain $ssbport "$final_path/peach-config"
 
 #=================================================
 # SETUP SSOWAT

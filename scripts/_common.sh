@@ -35,32 +35,33 @@ publish_address () {
     # the first argument of this function $1, is $domain
     # the second argument of this function $2, is $ssbport
     # the third argument of this function $3, is the path to peach-config binary
-    # the following environmental variables must also be set: GO_SBOT_DATADIR, PEACH_CONFIG_PATH
+    # the following environmental variables must also be set: PEACH_CONFIG_PATH
     host=$1
     port=$2
     peach_config=$3
+    echo $peach_config
     sbot_is_running=0
     num_attempts=0
-    while [ sbot_is_running -eq 0 && num_attempts -le 8 ]
+    while [ $sbot_is_running -eq 0 ] && [ $num_attempts -le 8 ]
     do
-      whoami=$($peach_config whoami)
-      echo "whoami $whoami"
-      sbot_is_running=$?
-      if [ sbot_is_runnnig -eq 0 ]
+      whoami=$(PEACH_CONFIG_PATH=$PEACH_CONFIG_PATH $peach_config whoami) && return
+      if [ -z "$whoami" ]; then sbot_is_running=0; else sbot_is_running=1; fi
+      ynh_script_progression --message="whoami $whoami"  --weight=1
+      if [ $sbot_is_running -eq 0 ]
       then
-          sleep 1
-          num_attempts += 1
-          echo "trying again $num_attempts"
+          sleep 2
+          num_attempts=$((num_attempts+1))
+          ynh_script_progression --message="trying again $num_attempts"  --weight=1
       fi
     done
-    if [ sbot_is_runnnig -eq 1 ]
+    if [ $sbot_is_running -eq 1 ]
     then
         # now sbot is running, and we publish the address
-        $peach_config publish-address -a $host:$port
-        echo "successfully published $host:$port"
+        PEACH_CONFIG_PATH=$PEACH_CONFIG_PATH $peach_config publish-address -a $host:$port
+        ynh_script_progression --message="successfully published $host:$port"  --weight=1
     else
         # otherwise sbot failed to start, so lets exit with an error message
-        echo "Failed to publish address because sbot failed to start"
+        ynh_script_progression --message="Failed to publish address because sbot failed to start"  --weight=1
         exit 1
     fi
  }
