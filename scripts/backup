@@ -15,7 +15,6 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	### Remove this function if there's nothing to clean before calling the remove script.
 	true
 }
 # Exit if an error occurs during the execution of the script
@@ -39,11 +38,6 @@ go_sbot_service=$(ynh_app_setting_get --app=$app --key=go_sbot_service)
 #=================================================
 ynh_print_info --message="Declaring files to be backed up..."
 
-### N.B. : the following 'ynh_backup' calls are only a *declaration* of what needs
-### to be backuped and not an actual copy of any file. The actual backup that
-### creates and fill the archive with the files happens in the core after this
-### script is called. Hence ynh_backups calls takes basically 0 seconds to run.
-
 #=================================================
 # BACKUP THE APP MAIN DIR
 #=================================================
@@ -63,17 +57,10 @@ ynh_backup --src_path="$datadir" --is_big
 ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
 
 #=================================================
-# SPECIFIC BACKUP
-#=================================================
-
-ynh_backup --src_path="/etc/sudoers.d/$app"
-
-#=================================================
 # BACKUP LOGROTATE
 #=================================================
 
 ynh_backup --src_path="/etc/logrotate.d/$app"
-
 
 #=================================================
 # BACKUP SYSTEMD
@@ -81,6 +68,12 @@ ynh_backup --src_path="/etc/logrotate.d/$app"
 
 ynh_backup --src_path="/etc/systemd/system/$peach_web_service.service"
 ynh_backup --src_path="/etc/systemd/system/$go_sbot_service.service"
+
+#=================================================
+# BACKUP VARIOUS FILES
+#=================================================
+
+ynh_backup --src_path="/etc/sudoers.d/$app"
 
 #=================================================
 # END OF SCRIPT

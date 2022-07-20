@@ -14,8 +14,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 
 ynh_clean_setup () {
-	### Remove this function if there's nothing to clean before calling the remove script.
-	true
+	ynh_clean_check_starting
 }
 # Exit if an error occurs during the execution of the script
 ynh_abort_if_errors
@@ -27,10 +26,11 @@ ynh_abort_if_errors
 domain=$YNH_APP_ARG_DOMAIN
 path_url="/"
 is_public=$YNH_APP_ARG_IS_PUBLIC
-#ssb_admin_id=$YNH_APP_ARG_SSB_ADMIN_ID
 password=$YNH_APP_ARG_PASSWORD
-architecture=$YNH_ARCH
+
 app=$YNH_APP_INSTANCE_NAME
+
+architecture=$YNH_ARCH
 peach_web_service=$app-peach-web
 go_sbot_service=$app-go-sbot
 
@@ -60,7 +60,6 @@ ynh_app_setting_set --app=$app --key=domain --value=$domain
 ynh_app_setting_set --app=$app --key=path --value=$path_url
 ynh_app_setting_set --app=$app --key=peach_web_service --value=$peach_web_service
 ynh_app_setting_set --app=$app --key=go_sbot_service --value=$go_sbot_service
-#ynh_app_setting_set --app=$app --key=ssb_admin_id --value=$ssb_admin_id
 
 #=================================================
 # STANDARD MODIFICATIONS
@@ -77,18 +76,14 @@ ynh_app_setting_set --app=$app --key=port --value=$port
 ssbport=$(ynh_find_port --port=8008)
 ynh_app_setting_set --app=$app --key=ssbport --value=$ssbport
 
+# Open the ssbport to the public
+ynh_script_progression --message="Configuring firewall..."  --weight=1
+ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $ssbport
+
 #=================================================
 # INSTALL DEPENDENCIES
 #=================================================
 ynh_script_progression --message="Installing dependencies..." --weight=1
-
-### `ynh_install_app_dependencies` allows you to add any "apt" dependencies to the package.
-### Those deb packages will be installed as dependencies of this package.
-### If you're not using this helper:
-###		- Remove the section "REMOVE DEPENDENCIES" in the remove script
-###		- Remove the variable "pkg_dependencies" in _common.sh
-###		- As well as the section "REINSTALL DEPENDENCIES" in the restore script
-###		- And the section "UPGRADE DEPENDENCIES" in the upgrade script
 
 ynh_install_app_dependencies $pkg_dependencies
 
@@ -109,7 +104,6 @@ ynh_app_setting_set --app=$app --key=final_path --value=$final_path
 # Download, check integrity, uncompress and patch the source from app.src
 ynh_setup_source --dest_dir="$final_path" --source_id=$YNH_ARCH
 
-# permissions
 chmod 750 "$final_path"
 chmod -R o-rwx "$final_path"
 chown -R $app:www-data "$final_path"
@@ -119,11 +113,11 @@ chown -R $app:www-data "$final_path"
 #=================================================
 ynh_script_progression --message="Configuring NGINX web server..." --weight=1
 
-### `ynh_add_nginx_config` will use the file conf/nginx.conf
-
 # Create a dedicated NGINX config
 ynh_add_nginx_config
 
+#=================================================
+# SPECIFIC SETUP
 #=================================================
 # CREATE DATA DIRECTORY FOR PEACHCLOUD CONFIG AND GOSBOT DATA
 #=================================================
@@ -136,7 +130,6 @@ mkdir -p $datadir
 mkdir -p $datadir/config
 mkdir -p $datadir/.ssb-go
 
-# permissions
 chmod 750 "$datadir"
 chmod -R o-rwx "$datadir"
 chown -R $app:www-data "$datadir"
@@ -162,6 +155,7 @@ ynh_add_config --template="sudoers" --destination="/etc/sudoers.d/$app"
 # CONFIGURE ADMIN PASSWORD
 #=================================================
 ynh_script_progression --message="Configuring admin password" --weight=1
+
 escaped_password=$(printf "%q" $password)
 PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config changepassword -p $escaped_password
 
@@ -171,20 +165,8 @@ PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config changepass
 ynh_script_progression --message="Configuring a systemd service..."  --weight=1
 
 # Create a dedicated systemd config
-ynh_script_progression --message="peach_web_service: ${peach_web_service}" --weight=1
-ynh_script_progression --message="go_sbot_service: ${go_sbot_service}" --weight=1
-
-ynh_add_systemd_config -t peach-web.service -s $peach_web_service
-ynh_add_systemd_config -t go-sbot.service -s $go_sbot_service
-
-systemctl daemon-reload
-
-#=================================================
-# OPEN SSBPORT
-#=================================================
-# Open the ssbport to the public
-ynh_script_progression --message="Configuring firewall..."  --weight=1
-ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $ssbport
+ynh_add_systemd_config --template="peach-web.service" --service="$peach_web_service"
+ynh_add_systemd_config --template="go-sbot.service" --service="$go_sbot_service"
 
 #=================================================
 # GENERIC FINALIZATION
@@ -192,14 +174,6 @@ ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $ssbport
 # SETUP LOGROTATE
 #=================================================
 ynh_script_progression --message="Configuring log rotation..." --weight=1
-
-### `ynh_use_logrotate` is used to configure a logrotate configuration for the logs of this app.
-### Use this helper only if there is effectively a log file for this app.
-### If you're not using this helper:
-###		- Remove the section "BACKUP LOGROTATE" in the backup script
-###		- Remove also the section "REMOVE LOGROTATE CONFIGURATION" in the remove script
-###		- As well as the section "RESTORE THE LOGROTATE CONFIGURATION" in the restore script
-###		- And the section "SETUP LOGROTATE" in the upgrade script
 
 # Use logrotate to manage application logfile(s)
 ynh_use_logrotate
@@ -212,50 +186,21 @@ touch /var/log/$app/$app.log
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost with ssbport $ssbport..." --weight=1
 
-### `yunohost service add` integrates a service in YunoHost. It then gets
-### displayed in the admin interface and through the others `yunohost service` commands.
-### (N.B.: this line only makes sense if the app adds a service to the system!)
-### If you're not using these lines:
-###		- You can remove these files in conf/.
-###		- Remove the section "REMOVE SERVICE INTEGRATION IN YUNOHOST" in the remove script
-###		- As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
-###		- And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
-
 yunohost service add $go_sbot_service --description="$description" --log="/var/log/$app/$app.log"  --needs_exposed_ports $ssbport
 yunohost service add $peach_web_service --description="$description" --log="/var/log/$app/$app.log"  --needs_exposed_ports $ssbport
-
-### Additional options starting with 3.8:
-###
-### --needs_exposed_ports "$port" a list of ports that needs to be publicly exposed
-###                               which will then be checked by YunoHost's diagnosis system
-###                               (N.B. DO NOT USE THIS is the port is only internal!!!)
-###
-### --test_status "some command"  a custom command to check the status of the service
-###                               (only relevant if 'systemctl status' doesn't do a good job)
-###
-### --test_conf "some command"    some command similar to "nginx -t" that validates the conf of the service
-###
-### Re-calling 'yunohost service add' during the upgrade script is the right way
-### to proceed if you later realize that you need to enable some flags that
-### weren't enabled on old installs (be careful it'll override the existing
-### service though so you should re-provide all relevant flags when doing so)
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression --message="Starting a systemd service..." --weight=1
 
+# Start a systemd service
 start_systemd_services $app
 
 #=================================================
 # SETUP SSOWAT
 #=================================================
 ynh_script_progression --message="Configuring permissions..."  --weight=1
-
-# for normal operation of the app, is_public should equal True,
-# and all visitors should be able to access the admin section, with or without SSO
-# as peachpub has its own authentication and user-system
-# which operates outside of yunohost SSO
 
 # Make app public if necessary
 if [ $is_public -eq 1 ]
