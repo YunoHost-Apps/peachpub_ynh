@@ -1,5 +1,5 @@
 SOURCE_URL=http://releases.peachcloud.org/yunohost/peachcloud_1.0_Linux_aarch64.tar.gz
-SOURCE_SUM=f10d1ae81c4b1d8823ce944a49cbce98231d3aafcb108e6e6c9942e0af28334b
+SOURCE_SUM=ef301f353881adbad76c90987a5b0355a031d9c8db1fb39ea287b770fdcd11b9
 SOURCE_SUM_PRG=sha256sum
 SOURCE_FORMAT=tar.gz
 SOURCE_IN_SUBDIR=true
