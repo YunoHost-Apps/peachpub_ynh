@@ -55,8 +55,7 @@ ynh_abort_if_errors
 #=================================================
 ynh_script_progression --message="Stopping a systemd service..."  --weight=1
 
-ynh_systemd_action --service_name="$peach_web_service.service" --action="stop" --log_path="/var/log/$app/$app.log"
-ynh_systemd_action --service_name="$go_sbot_service.service" --action="stop" --log_path="/var/log/$app/$app.log"
+stop_systemd_services $app
 
 #=================================================
 # ENSURE DOWNWARD COMPATIBILITY
@@ -125,19 +124,18 @@ ynh_add_systemd_config -t "go-sbot.service" -s $go_sbot_service
 #=================================================
 ynh_script_progression --message="Upgrading logrotate configuration..."  --weight=1
 
+mkdir -p /var/log/$app
+chown -R $app:$app "/var/log/$app"
 # Use logrotate to manage app-specific logfile(s)
 ynh_use_logrotate --non-append
-
-# touch logfile so it exists
-touch /var/log/$app/$app.log
 
 #=================================================
 # INTEGRATE SERVICE IN YUNOHOST
 #=================================================
 ynh_script_progression --message="Integrating service in YunoHost..."  --weight=1
 
-yunohost service add $go_sbot_service --description="$description" --log="/var/log/$app/$app.log"  --needs_exposed_ports $ssbport
-yunohost service add $peach_web_service --description="$description" --log="/var/log/$app/$app.log"  --needs_exposed_ports $ssbport
+yunohost service add $go_sbot_service --description="$description" --log="/var/log/$app/$app-go-sbot.log"  --needs_exposed_ports $ssbport
+yunohost service add $peach_web_service --description="$description" --log="/var/log/$app/$app-peach-web.log"  --needs_exposed_ports $ssbport
 
 #=================================================
 # START SYSTEMD SERVICE

@@ -51,8 +51,8 @@ fi
 ynh_script_progression --message="Stopping and removing the systemd service..."  --weight=1
 
 # Remove the dedicated systemd config
-ynh_remove_systemd_config -s $app-go-sbot.service
-ynh_remove_systemd_config -s $app-peach-web.service
+ynh_remove_systemd_config --service="$go_sbot_service"
+ynh_remove_systemd_config --service="$peach_web_service"
 
 #=================================================
 # REMOVE LOGROTATE CONFIGURATION
