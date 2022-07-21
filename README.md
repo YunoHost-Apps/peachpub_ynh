@@ -27,7 +27,7 @@ For more documentation about PeachPub, visit https://docs.peachcloud.org.
 - Invite creation 
 - Update pub profile and description
 
-**Shipped version:** 0.6.19~ynh6
+**Shipped version:** 0.6.19~ynh7
 
 **Demo:** https://demo.peachcloud.org
 
@@ -41,8 +41,7 @@ For more documentation about PeachPub, visit https://docs.peachcloud.org.
  - currently ony supports the following architectures: amd64, arm64, arm7
 ## Documentation and resources
 
-* Official app website: <https://docs.peachcloud.org>
-* Official user documentation: <https://docs.peachcloud.org>
+* Official app website: <https://www.peachcloud.org>
 * Official admin documentation: <https://docs.peachcloud.org>
 * Upstream app code repository: <https://git.coopcloud.tech/PeachCloud>
 * YunoHost documentation for this app: <https://yunohost.org/app_peachpub>
