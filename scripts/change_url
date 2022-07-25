@@ -20,11 +20,14 @@ new_domain=$YNH_APP_NEW_DOMAIN
 new_path=$YNH_APP_NEW_PATH
 
 app=$YNH_APP_INSTANCE_NAME
+<<<<<<< HEAD
 peach_web_service=$(ynh_app_setting_get --app=$app --key=peach_web_service)
 go_sbot_service=$(ynh_app_setting_get --app=$app --key=go_sbot_service)
 datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 ssbport=$(ynh_app_setting_get --app=$app --key=ssbport)
+=======
+>>>>>>> 89f25f18a99a73de44d6f2a6c566888859f44841
 
 #=================================================
 # LOAD SETTINGS
@@ -34,6 +37,11 @@ ynh_script_progression --message="Loading installation settings..."  --weight=1
 # Needed for helper "ynh_add_nginx_config"
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 
+# Add settings here as needed by your application
+peach_web_service=$(ynh_app_setting_get --app=$app --key=peach_web_service)
+go_sbot_service=$(ynh_app_setting_get --app=$app --key=go_sbot_service)
+datadir=$(ynh_app_setting_get --app=$app --key=datadir)
+
 #=================================================
 # BACKUP BEFORE CHANGE URL THEN ACTIVE TRAP
 #=================================================
@@ -42,6 +50,7 @@ ynh_script_progression --message="Backing up the app before changing its URL (ma
 # Backup the current version of the app
 ynh_backup_before_upgrade
 ynh_clean_setup () {
+	ynh_clean_check_starting
 	# Remove the new domain config file, the remove script won't do it as it doesn't know yet its location.
 	ynh_secure_remove --file="/etc/nginx/conf.d/$new_domain.d/$app.conf"
 
@@ -103,16 +112,24 @@ then
 	mv $nginx_conf_path /etc/nginx/conf.d/$new_domain.d/$app.conf
 	# Store file checksum for the new config file location
 	ynh_store_file_checksum --file="/etc/nginx/conf.d/$new_domain.d/$app.conf"
-	# replace domain in config.yml
-	ynh_replace_string --match_string=$old_domain --replace_string=$new_domain --target_file="$datadir/config/config.yml"
-	# replace domain in systemd service file
-	ynh_replace_string --match_string=$old_domain --replace_string=$new_domain --target_file="/etc/systemd/system/$peach_web_service.service"
-	ynh_replace_string --match_string=$old_domain --replace_string=$new_domain --target_file="/etc/systemd/system/$go_sbot_service.service"
-	systemctl daemon-reload
 	# publish new domain with the sbot
   PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config wait-for-sbot
   PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config publish-address -a $domain:$ssbport
 fi
+
+#=================================================
+# SPECIFIC MODIFICATIONS
+#=================================================
+# UPDATE A CONFIG FILE
+#=================================================
+ynh_script_progression --message="Updating a configuration file..."
+
+# replace domain in config.yml
+ynh_replace_string --match_string=$old_domain --replace_string=$new_domain --target_file="$datadir/config/config.yml"
+# replace domain in systemd service file
+ynh_replace_string --match_string=$old_domain --replace_string=$new_domain --target_file="/etc/systemd/system/$peach_web_service.service"
+ynh_replace_string --match_string=$old_domain --replace_string=$new_domain --target_file="/etc/systemd/system/$go_sbot_service.service"
+systemctl daemon-reload
 
 #=================================================
 # GENERIC FINALISATION
@@ -121,6 +138,7 @@ fi
 #=================================================
 ynh_script_progression --message="Starting a systemd service..."  --weight=1
 
+# Start a systemd service
 start_systemd_services $app
 
 #=================================================

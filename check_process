@@ -1,12 +1,8 @@
 ;; Test complet
 	; Manifest
 		domain="domain.tld"
-		path="/path"
-		admin="john"
 		is_public=1
 		password="1Strong-Password"
-		ssb_admin_id="@5Pt3dKy2HTJ0mWuS78oIiklIX0gBz6BTfEnXsbvke9c=.ed25519"
-		port="222"
 	; Checks
 		pkg_linter=1
 		setup_sub_dir=0
@@ -17,4 +13,8 @@
 		upgrade=1
 		backup_restore=1
 		multi_instance=1
+		port_already_use=0
 		change_url=1
+;;; Options
+Email=
+Notification=none
