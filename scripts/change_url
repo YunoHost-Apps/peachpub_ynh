@@ -20,14 +20,11 @@ new_domain=$YNH_APP_NEW_DOMAIN
 new_path=$YNH_APP_NEW_PATH
 
 app=$YNH_APP_INSTANCE_NAME
-<<<<<<< HEAD
 peach_web_service=$(ynh_app_setting_get --app=$app --key=peach_web_service)
 go_sbot_service=$(ynh_app_setting_get --app=$app --key=go_sbot_service)
 datadir=$(ynh_app_setting_get --app=$app --key=datadir)
 final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 ssbport=$(ynh_app_setting_get --app=$app --key=ssbport)
-=======
->>>>>>> 89f25f18a99a73de44d6f2a6c566888859f44841
 
 #=================================================
 # LOAD SETTINGS
