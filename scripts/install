@@ -250,7 +250,8 @@ start_systemd_services $app
 #=================================================
 # CONFIGURE DOMAIN AFTER SBOT IS RUNNING
 #=================================================
-PEACH_CONFIG_PATH=$datadir/config/config.yml publish_address $domain $ssbport "$final_path/peach-config"
+PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config wait-for-sbot
+PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config publish-address -a $domain:$ssbport
 
 #=================================================
 # SETUP SSOWAT

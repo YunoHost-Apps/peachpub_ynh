@@ -110,7 +110,8 @@ then
 	ynh_replace_string --match_string=$old_domain --replace_string=$new_domain --target_file="/etc/systemd/system/$go_sbot_service.service"
 	systemctl daemon-reload
 	# publish new domain with the sbot
-	publish_address $domain $ssbport $final_path/peach-config
+  PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config wait-for-sbot
+  PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config publish-address -a $domain:$ssbport
 fi
 
 #=================================================
