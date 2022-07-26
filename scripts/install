@@ -197,6 +197,12 @@ ynh_script_progression --message="Starting a systemd service..." --weight=1
 start_systemd_services $app
 
 #=================================================
+# CONFIGURE DOMAIN AFTER SBOT IS RUNNING
+#=================================================
+PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config wait-for-sbot
+PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config publish-address -a $domain:$ssbport
+
+#=================================================
 # SETUP SSOWAT
 #=================================================
 ynh_script_progression --message="Configuring permissions..."  --weight=1
