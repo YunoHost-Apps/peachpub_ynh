@@ -20,11 +20,6 @@ new_domain=$YNH_APP_NEW_DOMAIN
 new_path=$YNH_APP_NEW_PATH
 
 app=$YNH_APP_INSTANCE_NAME
-peach_web_service=$(ynh_app_setting_get --app=$app --key=peach_web_service)
-go_sbot_service=$(ynh_app_setting_get --app=$app --key=go_sbot_service)
-datadir=$(ynh_app_setting_get --app=$app --key=datadir)
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-ssbport=$(ynh_app_setting_get --app=$app --key=ssbport)
 
 #=================================================
 # LOAD SETTINGS
@@ -38,6 +33,7 @@ final_path=$(ynh_app_setting_get --app=$app --key=final_path)
 peach_web_service=$(ynh_app_setting_get --app=$app --key=peach_web_service)
 go_sbot_service=$(ynh_app_setting_get --app=$app --key=go_sbot_service)
 datadir=$(ynh_app_setting_get --app=$app --key=datadir)
+ssbport=$(ynh_app_setting_get --app=$app --key=ssbport)
 
 #=================================================
 # BACKUP BEFORE CHANGE URL THEN ACTIVE TRAP
@@ -109,9 +105,6 @@ then
 	mv $nginx_conf_path /etc/nginx/conf.d/$new_domain.d/$app.conf
 	# Store file checksum for the new config file location
 	ynh_store_file_checksum --file="/etc/nginx/conf.d/$new_domain.d/$app.conf"
-	# publish new domain with the sbot
-  PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config wait-for-sbot
-  PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config publish-address -a $domain:$ssbport
 fi
 
 #=================================================
@@ -137,6 +130,11 @@ ynh_script_progression --message="Starting a systemd service..."  --weight=1
 
 # Start a systemd service
 start_systemd_services $app
+
+# publish new domain with the sbot, once the services are running again
+ynh_script_progression --message="Publishing new domain with sbot..."  --weight=1
+PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config wait-for-sbot
+PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config publish-address -a $new_domain:$ssbport
 
 #=================================================
 # RELOAD NGINX
