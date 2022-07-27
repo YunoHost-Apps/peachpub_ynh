@@ -133,8 +133,8 @@ start_systemd_services $app
 
 # publish new domain with the sbot, once the services are running again
 ynh_script_progression --message="Publishing new domain with sbot..."  --weight=1
-PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config wait-for-sbot
-PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config publish-address -a $new_domain:$ssbport
+ynh_exec_as $app PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config wait-for-sbot
+ynh_exec_as $app PEACH_CONFIG_PATH=$datadir/config/config.yml $final_path/peach-config publish-address -a $new_domain:$ssbport
 
 #=================================================
 # RELOAD NGINX
