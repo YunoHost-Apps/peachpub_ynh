@@ -150,6 +150,8 @@ chown $app:$app "$datadir/config/config.yml"
 
 mkdir -p /etc/sudoers.d/
 ynh_add_config --template="sudoers" --destination="/etc/sudoers.d/$app"
+chown root:root /etc/sudoers.d/$app
+chmod 440 /etc/sudoers.d/$app
 
 #=================================================
 # CONFIGURE ADMIN PASSWORD
