@@ -148,6 +148,7 @@ ynh_add_config --template="peach.yml" --destination="$datadir/config/config.yml"
 chmod 600 "$datadir/config/config.yml"
 chown $app:$app "$datadir/config/config.yml"
 
+ynh_script_progression --message="Creating /etc/sudoers.d/$app" --weight=1
 mkdir -p /etc/sudoers.d/
 ynh_add_config --template="sudoers" --destination="/etc/sudoers.d/$app"
 chown root:root /etc/sudoers.d/$app
