@@ -6,6 +6,7 @@ After=network.target
 Type=simple
 User=__APP__
 Group=__APP__
+Restart=always
 WorkingDirectory=__FINALPATH__
 Environment="PORT=__PORT__"
 Environment="PEACH_CONFIGDIR=__DATADIR__/config"
