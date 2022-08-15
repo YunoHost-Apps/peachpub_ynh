@@ -6,6 +6,7 @@ After=network.target
 Type=simple
 User=__APP__
 Group=__APP__
+Restart=always
 WorkingDirectory=__DATADIR__/.ssb-go
 Environment="LIBRARIAN_WRITEALL=0"
 Environment="SSB_CONFIG_FILE=__DATADIR__/.ssb-go/config.toml"
