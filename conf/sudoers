@@ -1,0 +1,1 @@
+__APP__ ALL=(ALL) NOPASSWD: /usr/bin/systemctl start __TILDE_SBOT_SERVICE__, /usr/bin/systemctl stop __TILDE_SBOT_SERVICE__, /usr/bin/systemctl restart __TILDE_SBOT_SERVICE__, /usr/bin/systemctl enable __TILDE_SBOT_SERVICE__, /usr/bin/systemctl disable __TILDE_SBOT_SERVICE__

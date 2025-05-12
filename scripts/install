@@ -32,28 +32,37 @@ source /usr/share/yunohost/helpers
 
 # If you need to, you can define custom settings
 # (or remove this section entirely if not relevant for you)
-foo="bar"
-ynh_app_setting_set --key=foo --value=$foo
+peach_web_service=$app-peach-web
+tilde_sbot_service=$app-tilde-sbot
 
-ynh_app_setting_set --key=php_upload_max_filesize --value=50M
-ynh_app_setting_set --key=php_post_max_size --value=50M
+ynh_app_setting_set --key=peach_web_service --value=$peach_web_service
+ynh_app_setting_set --key=tilde_sbot_service --value=$tilde_sbot_service
+
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
 #=================================================
 ynh_script_progression "Setting up source files..."
 
-### `ynh_setup_source` is used to install an app from a zip or tar.gz file,
-### downloaded from an upstream source, like a git repository.
-### `ynh_setup_source` use the file manifest.toml
-
 # Download, check integrity, uncompress and patch the source from manifest.toml
 ynh_setup_source --dest_dir="$install_dir"
-
-### $install_dir will automatically be initialized with some decent
-### permission by default... however, you may need to recursively reapply
-### ownership to all files such as after the ynh_setup_source step
 chown -R "$app:www-data" "$install_dir"
+
+
+#=================================================
+# PORT CONFIGURATION
+#=================================================
+# Find an available port
+port=$(ynh_find_port --port=8095)
+ynh_app_setting_set --app=$app --key=port --value=$port
+
+# Find an available port for ssb connection
+ssbport=$(ynh_find_port --port=8008)
+ynh_app_setting_set --app=$app --key=ssbport --value=$ssbport
+
+# Open the ssbport to the public
+ynh_script_progression --message="Configuring firewall..."  --weight=1
+ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $ssbport
 
 #=================================================
 # APP INITIAL CONFIGURATION
