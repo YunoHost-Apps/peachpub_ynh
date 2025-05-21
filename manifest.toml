@@ -47,7 +47,7 @@ ram.runtime = "50M"
     [install.path]
     # this is a generic question - ask strings are automatically handled by YunoHost's core
     type = "path"
-    default = "/example"
+    default = "/"
 
     [install.init_main_permission]
     # this is a generic question - ask strings are automatically handled by YunoHost's core
@@ -81,7 +81,8 @@ ram.runtime = "50M"
 
     [resources.sources.main]
     url = "https://files.commoninternet.net/assets/release-0.7.0~ynh1/peachpub-0.7.0~ynh1.tar.gz"
-    sha256 = "ea416e7dc46655040289c849579acef01d07c41f0eab3c0240c92867e4f842a0"
+    sha256 = "2ed9491d21c1aec30b1f9b36b1411c8e7716fccf8a7a410d3739a7b63697e987"
+    in_subdir = false
 
     # These infos are used by https://github.com/YunoHost/apps_tools/blob/main/autoupdate_app_sources/autoupdate_app_sources.py
     # to auto-update the previous asset urls and sha256sum + manifest version
@@ -107,7 +108,10 @@ ram.runtime = "50M"
     main.url = "/"
 
     [resources.ports]
-    # This will pick a random port for reverse-proxying and store it as the $port setting
+    main.default = 8095
+    main.exposed = "false"
+    ssb.default = 8008
+    ssb.exposed = "Both"
 
     [resources.apt]
     # This will automatically install/uninstall the following apt packages

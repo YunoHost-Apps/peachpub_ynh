@@ -8,14 +8,11 @@ User=__APP__
 Group=__APP__
 Restart=always
 WorkingDirectory=__INSTALL_DIR__/
-Environment="PORT=__PORT__"
-Environment="PEACH_CONFIGDIR=__DATADIR__/config"
-Environment="PEACH_CONFIG_PATH=__DATADIR__/config/config.yml"
-Environment="GO_SBOT_DATADIR=__DATADIR__/.ssb-go"
-Environment="GO_SBOT_SERVICE=__GO_SBOT_SERVICE__"
+Environment="PEACH_CONFIGDIR=__INSTALL_DIR__/config"
+Environment="PEACH_CONFIG_PATH=__INSTALL_DIR__/config/config.yml"
 Environment="RUST_LOG=info"
 ExecStart=__INSTALL_DIR__/peach-web
-StandardOutput=append:/var/log/__APP__/__APP__.log
+StandardOutput=append:/var/log/__APP__/__APP__-peach-web.log
 StandardError=inherit
 
 # Sandboxing options to harden security

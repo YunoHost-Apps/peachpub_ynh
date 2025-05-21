@@ -34,10 +34,11 @@ source /usr/share/yunohost/helpers
 # (or remove this section entirely if not relevant for you)
 peach_web_service=$app-peach-web
 tilde_sbot_service=$app-tilde-sbot
+tilde_dir=$install_dir/.ssb-tilde
 
 ynh_app_setting_set --key=peach_web_service --value=$peach_web_service
 ynh_app_setting_set --key=tilde_sbot_service --value=$tilde_sbot_service
-
+ynh_app_setting_set --key=tilde_dir --value=$tilde_dir
 
 #=================================================
 # DOWNLOAD, CHECK AND UNPACK SOURCE
@@ -50,70 +51,32 @@ chown -R "$app:www-data" "$install_dir"
 
 
 #=================================================
-# PORT CONFIGURATION
-#=================================================
-# Find an available port
-port=$(ynh_find_port --port=8095)
-ynh_app_setting_set --app=$app --key=port --value=$port
-
-# Find an available port for ssb connection
-ssbport=$(ynh_find_port --port=8008)
-ynh_app_setting_set --app=$app --key=ssbport --value=$ssbport
-
-# Open the ssbport to the public
-ynh_script_progression --message="Configuring firewall..."  --weight=1
-ynh_exec_warn_less yunohost firewall allow --no-upnp TCP $ssbport
-
-#=================================================
 # APP INITIAL CONFIGURATION
 #=================================================
-ynh_script_progression "Adding $app's configuration files..."
 
-### You can add specific configuration files.
-###
-### Typically, put your template conf file in ../conf/your_config_file
-### The template may contain strings such as __FOO__ or __FOO_BAR__,
-### which will automatically be replaced by the values of $foo and $foo_bar
-###
-### ynh_config_add will also keep track of the config file's checksum,
-### which later during upgrade may allow to automatically backup the config file
-### if it's found that the file was manually modified
-###
-### Check the documentation of `ynh_config_add` for more info.
+mkdir -p $install_dir/config
+mkdir -p $install_dir/.ssb-tilde
 
-ynh_config_add --template="some_config_file" --destination="$install_dir/some_config_file"
+ynh_script_progression --message="Adding a configuration file for tilde-sbot" 
+ynh_config_add --template="tilde-sbot.toml" --destination="$tilde_dir/tilde-sbot.toml"
+chmod 600 "$tilde_dir/tilde-sbot.toml"
+chown -R $app:$app "$tilde_dir/"
 
-# FIXME: this should be handled by the core in the future
-### You may need to use chmod 600 instead of 400,
-### for example if the app is expected to be able to modify its own config
-chmod 400 "$install_dir/some_config_file"
-chown "$app:$app" "$install_dir/some_config_file"
+ynh_script_progression --message="Adding a configuration file for peach-web" 
+ynh_config_add --template="peach.yml" --destination="$install_dir/config/config.yml"
+chmod 600 "$install_dir/config/config.yml"
+chown $app:$app "$install_dir/config/config.yml"
 
-### For more complex cases where you want to replace stuff using regexes,
-### you shoud rely on ynh_replace (which is basically a wrapper for sed)
-### When doing so, you also need to manually call ynh_store_file_checksum
-###
-### ynh_replace --match="match_string" --replace="replace_string" --file="$install_dir/some_config_file"
-### ynh_store_file_checksum "$install_dir/some_config_file"
+ynh_script_progression --message="Creating /etc/sudoers.d/$app" 
+mkdir -p /etc/sudoers.d/
+ynh_config_add --template="sudoers" --destination="/etc/sudoers.d/$app"
+chown root:root /etc/sudoers.d/$app
+chmod 440 /etc/sudoers.d/$app
 
 #=================================================
 # SYSTEM CONFIGURATION
 #=================================================
 ynh_script_progression "Adding system configurations related to $app..."
-
-### `ynh_config_add_phpfpm` is used to set up a PHP config.
-### You can remove it if your app doesn't use PHP.
-### `ynh_config_add_phpfpm` will use the files conf/extra_php-fpm.conf
-### If you're not using these lines:
-###   - You can remove these files in conf/.
-###   - Remove the section "BACKUP THE PHP-FPM CONFIGURATION" in the backup script
-###   - Remove also the section "REMOVE PHP-FPM CONFIGURATION" in the remove script
-###   - As well as the section "RESTORE THE PHP-FPM CONFIGURATION" in the restore script
-###     with the reload at the end of the script.
-###   - And the section "PHP-FPM CONFIGURATION" in the upgrade script
-
-# Create a PHP-FPM config (with conf/extra_php-fpm.conf being appended to it)
-ynh_config_add_phpfpm
 
 # Create a dedicated NGINX config using the conf/nginx.conf template
 ynh_config_add_nginx
@@ -130,7 +93,8 @@ ynh_config_add_nginx
 ###   - And the section "SETUP SYSTEMD" in the upgrade script
 
 # Create a dedicated systemd config
-ynh_config_add_systemd
+ynh_config_add_systemd --service=$app-peach-web --template=peach-web.service
+ynh_config_add_systemd --service=$app-tilde-sbot --template=tilde-sbot.service
 
 ### `yunohost service add` integrates a service in YunoHost. It then gets
 ### displayed in the admin interface and through the others `yunohost service` commands.
@@ -142,22 +106,14 @@ ynh_config_add_systemd
 ###   - And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
 
 ### Additional options starting with 3.8:
-###
+### TODO: check this port thing again
 ### --needs_exposed_ports "$port" a list of ports that needs to be publicly exposed
 ###                               which will then be checked by YunoHost's diagnosis system
 ###                               (N.B. DO NOT USE THIS if the port is only internal!!!)
-###
-### --test_status "some command"  a custom command to check the status of the service
-###                               (only relevant if 'systemctl status' doesn't do a good job)
-###
-### --test_conf "some command"    some command similar to "nginx -t" that validates the conf of the service
-###
-### Re-calling 'yunohost service add' during the upgrade script is the right way
-### to proceed if you later realize that you need to enable some flags that
-### weren't enabled on old installs (be careful it'll override the existing
-### service though so you should re-provide all relevant flags when doing so)
-yunohost service add "$app" --description="A short description of the app" --log="/var/log/$app/$app.log"
+yunohost service add "$app-peach-web" --description="peach-web service" --log="/var/log/$app/$app-peach-web.log"
+yunohost service add "$app-tilde-sbot" --description="tilde-sbot service" --log="/var/log/$app/$app-tilde-sbot.log"
 
+### TODO: remove this comment
 ### `ynh_config_add_logrotate` is used to configure a logrotate configuration for the logs of this app.
 ### Use this helper only if there is effectively a log file for this app.
 ### If you're not using this helper:
@@ -169,26 +125,15 @@ yunohost service add "$app" --description="A short description of the app" --log
 # Use logrotate to manage application logfile(s)
 ynh_config_add_logrotate
 
+# TODO: figure out fail2ban
 # Create a dedicated Fail2Ban config
-ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
+# ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
 
-#=================================================
-# SETUP APPLICATION WITH CURL
-#=================================================
-
-### Use these lines only if the app installation needs to be finalized through
-### web forms. We generally don't want to ask the final user,
-### so we're going to use curl to automatically fill the fields and submit the
-### forms.
-
-# Installation with curl
-ynh_script_progression "Finalizing installation..."
-ynh_local_curl "/INSTALL_PATH" "key1=value1" "key2=value2" "key3=value3"
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
-ynh_script_progression "Starting $app's systemd service..."
+ynh_script_progression "Starting $app's systemd services..."
 
 ### `ynh_systemctl` is used to start a systemd service for an app.
 ### Only needed if you have configure a systemd service
@@ -199,7 +144,8 @@ ynh_script_progression "Starting $app's systemd service..."
 ###   - And the section "STOP SYSTEMD SERVICE" and "START SYSTEMD SERVICE" in the change_url script
 
 # Start a systemd service
-ynh_systemctl --service="$app" --action="start"
+ynh_systemctl --service="$app-tilde-sbot" --action="start"
+ynh_systemctl --service="$app-peach-web" --action="start"
 
 #=================================================
 # END OF SCRIPT

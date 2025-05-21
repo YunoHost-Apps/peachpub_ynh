@@ -7,9 +7,9 @@ Type=simple
 User=__APP__
 Group=__APP__
 Restart=always
-WorkingDirectory=__INSTALL_DIR__/.ssb-tilde
-ExecStart=__INSTALL_DIR__/run-tilde-sbot.sh
-StandardOutput=append:/var/log/__APP__/__APP__.log
+WorkingDirectory=__TILDE_DIR__
+ExecStart=__INSTALL_DIR__/run-tilde-sbot.sh __TILDE_DIR__/tilde-sbot.toml __INSTALL_DIR__/tildefriends.standalone run
+StandardOutput=append:/var/log/__APP__/__APP__-tilde-sbot.log
 StandardError=inherit
 
 # Sandboxing options to harden security
