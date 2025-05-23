@@ -1,5 +1,5 @@
 [Unit]
-Description=go-sbot service
+Description=tilde-sbot service
 After=network.target
 
 [Service]
@@ -7,11 +7,9 @@ Type=simple
 User=__APP__
 Group=__APP__
 Restart=always
-WorkingDirectory=__DATADIR__/.ssb-go
-Environment="LIBRARIAN_WRITEALL=0"
-Environment="SSB_CONFIG_FILE=__DATADIR__/.ssb-go/config.toml"
-ExecStart=__FINALPATH__/go-sbot
-StandardOutput=append:/var/log/__APP__/__APP__-go-sbot.log
+WorkingDirectory=__TILDE_DIR__
+ExecStart=__INSTALL_DIR__/run-tilde-sbot.sh __TILDE_DIR__/tilde-sbot.toml __INSTALL_DIR__/tildefriends.standalone run
+StandardOutput=append:/var/log/__APP__/__APP__-tilde-sbot.log
 StandardError=inherit
 
 # Sandboxing options to harden security

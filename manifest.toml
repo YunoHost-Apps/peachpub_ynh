@@ -1,0 +1,119 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/main/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "peachpub_ynh"
+name = "Peachpub"
+description.en = "Secure Scuttlebutt pub with a web interface for pub management."
+description.fr = "Sécuriser le pub Scuttlebutt avec une interface web pour la gestion du pub."
+
+version = "0.7.0~ynh1"
+
+maintainers = ["Max Fowler"]
+
+[upstream]
+# NB: Only the "license" key is mandatory. Remove entries for which there's no relevant data
+license = "free" # you can see the available licenses identifiers list here: https://spdx.org/licenses/
+website = "https://peach.commoninternet.net"
+demo = "https://peachdemo.commoninternet.net"
+admindoc = "https://yunohost.org/packaging_apps"
+userdoc = "https://yunohost.org/apps"
+code = "https://git.coopcloud.tech/PeachCloud/peach-workspace"
+
+
+# FIXME: optional but recommended (or remove if irrelevant / not applicable).
+# This is meant to be an URL where people can financially support this app, especially when its development is based
+# on volunteers and/or financed by its community. YunoHost may later advertise it in the webadmin.
+fund = "https://opencollective.com/peachcloud"
+
+[integration]
+yunohost = ">= 12.0.9"
+helpers_version = "2.1"
+# FIXME: can be replaced by a list of supported archs using the dpkg --print-architecture nomenclature (amd64/i386/armhf/arm64), for example: ["amd64", "i386"]
+architectures = ["amd64", "arm64"]
+multi_instance = true
+
+ldap = "false"
+sso = "false"
+disk = "50M"
+ram.build = "50M"
+ram.runtime = "50M"
+
+[install]
+    [install.domain]
+    # this is a generic question - ask strings are automatically handled by YunoHost's core
+    type = "domain"
+
+    [install.path]
+    # this is a generic question - ask strings are automatically handled by YunoHost's core
+    type = "path"
+    default = "/"
+
+    [install.init_main_permission]
+    # this is a generic question - ask strings are automatically handled by YunoHost's core
+    # This won't be saved as setting and will instead be used to initialize the SSOwat permission
+    type = "group"
+    default = "visitors"
+
+    [install.language]
+    ask.en = "Choose the application language"
+    ask.fr = "Choisissez la langue de l'application"
+    type = "select"
+    choices = ["fr", "en"]
+    default = "fr"
+
+    [install.admin]
+    # this is a generic question - ask strings are automatically handled by YunoHost's core
+    type = "user"
+
+    [install.password]
+    # this is a generic question - ask strings are automatically handled by YunoHost's core
+    # Note that user-provided passwords questions are not automatically saved as setting
+    help.en = "Use the help field to add an information for the admin about this question."
+    help.fr = "Utilisez le champ aide pour ajouter une information à l'intention de l'administrateur à propos de cette question."
+    type = "password"
+
+[resources]
+    # See the packaging documentation for the full set
+    # of explanation regarding the behavior and properties for each of those
+
+    [resources.sources]
+
+    [resources.sources.main]
+    url = "https://files.commoninternet.net/assets/release-0.7.0~ynh1/peachpub-0.7.0~ynh1.tar.gz"
+    sha256 = "873b62027fd803d15eaf6b92d928786a8624f90e100f56577b8040fcbdb0289d"
+    in_subdir = false
+
+    # These infos are used by https://github.com/YunoHost/apps_tools/blob/main/autoupdate_app_sources/autoupdate_app_sources.py
+    # to auto-update the previous asset urls and sha256sum + manifest version
+    # assuming the upstream's code repo is on github and relies on tags or releases
+    # See the 'sources' resource documentation for more details
+
+    # autoupdate.strategy = "latest_github_tag"
+
+    [resources.system_user]
+    # This will provision/deprovision a unix system user
+
+    [resources.install_dir]
+    # This will create/remove the install dir as /var/www/$app
+    # and store the corresponding setting $install_dir
+
+    [resources.data_dir]
+    # This will create/remove the data dir as /home/yunohost.app/$app
+    # and store the corresponding setting $data_dir
+
+    [resources.permissions]
+    # This will configure SSOwat permission for $domain/$path/
+    # The initial allowed group of user is configured via the init_main_permission question (public=visitors, private=all_users)
+    main.url = "/"
+
+    [resources.ports]
+    main.default = 8095
+    main.exposed = "false"
+    ssb.default = 8008
+    ssb.exposed = "Both"
+
+    [resources.apt]
+    # This will automatically install/uninstall the following apt packages
+    # and implicitly define the $phpversion setting as 8.0 (if phpX.Y-foobar dependencies are listed)
+    packages = ""

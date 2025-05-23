@@ -1,3 +1,4 @@
+#:schema https://github.com/YunoHost/apps/raw/main/schemas/config_panel.v1.schema.json
 
 ## Config panel are available from webadmin > Apps > YOUR_APP > Config Panel Button
 ## Those panels let user configure some params on their apps using a friendly interface,
@@ -222,6 +223,13 @@ services = ["__APP__"]
         ## (optional) set to true in order to redact the value in operation logs
         # redact = false
 
+        ## (optional) for boolean questions you can specify replacement values 
+        ## bound to true and false, in case property is bound to config file
+        # useful if bound property in config file expects something else than integer 1
+        yes = "Enable" 
+        # useful if bound property in config file expects something else than integer 0
+        no = "Disable" 
+
         ## (optional) A validation pattern
         ## ---------------------------------------------------------------------
         ## IMPORTANT: your pattern should be between simple quote, not double.
@@ -246,14 +254,14 @@ services = ["__APP__"]
         type = "file"
         accept = ".png"
         help = "Fill with an already resized logo"
-        bind = "__FINALPATH__/img/logo.png"
+        bind = "__INSTALL_DIR__/img/logo.png"
         
         [main.customization.favicon]
         ask = "Favicon"
         type = "file"
         accept = ".png"
         help = "Fill with an already sized favicon"
-        bind = "__FINALPATH__/img/favicon.png"
+        bind = "__INSTALL_DIR__/img/favicon.png"
 
         
     [main.stripe]

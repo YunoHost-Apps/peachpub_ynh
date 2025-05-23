@@ -1,5 +1,5 @@
 [Unit]
-Description=Peachpub service
+Description=peach-web service
 After=network.target
 
 [Service]
@@ -7,34 +7,30 @@ Type=simple
 User=__APP__
 Group=__APP__
 Restart=always
-WorkingDirectory=__FINALPATH__
-Environment="PORT=__PORT__"
-Environment="PEACH_CONFIGDIR=__DATADIR__/config"
-Environment="PEACH_CONFIG_PATH=__DATADIR__/config/config.yml"
-Environment="GO_SBOT_DATADIR=__DATADIR__/.ssb-go"
-Environment="GO_SBOT_SERVICE=__GO_SBOT_SERVICE__"
+WorkingDirectory=__INSTALL_DIR__/
+Environment="PEACH_CONFIGDIR=__INSTALL_DIR__/config"
+Environment="PEACH_CONFIG_PATH=__INSTALL_DIR__/config/config.yml"
 Environment="RUST_LOG=info"
-ExecStart=__FINALPATH__/peach-web
+ExecStart=__INSTALL_DIR__/peach-web
 StandardOutput=append:/var/log/__APP__/__APP__-peach-web.log
 StandardError=inherit
 
 # Sandboxing options to harden security
-# Depending on specificities of your service/app, you may need to tweak these
-# .. but this should be a good baseline
-# Details for these options: https://www.freedesktop.org/software/systemd/man/systemd.exec.html
-NoNewPrivileges=yes
+# some options were commented out in order to allow peach-web to use systemctl to stop, start and restart tilde-sbot
+# more info about this in this forum post: https://forum.yunohost.org/t/using-nonewpriviliges-no-in-systemd-process/37012/5
+#NoNewPrivileges=yes
 PrivateTmp=yes
-PrivateDevices=yes
-RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
-RestrictNamespaces=yes
-RestrictRealtime=yes
+#PrivateDevices=yes
+#RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+#RestrictNamespaces=yes
+#RestrictRealtime=yes
 DevicePolicy=closed
 ProtectSystem=full
 ProtectControlGroups=yes
-ProtectKernelModules=yes
-ProtectKernelTunables=yes
-LockPersonality=yes
-SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @setuid @swap
+#ProtectKernelModules=yes
+#ProtectKernelTunables=yes
+#LockPersonality=yes
+#SystemCallFilter=~@clock @debug @module @mount @obsolete @reboot @setuid @swap
 
 # Denying access to capabilities that should not be relevant for webapps
 # Doc: https://man7.org/linux/man-pages/man7/capabilities.7.html
