@@ -8,7 +8,7 @@ User=__APP__
 Group=__APP__
 Restart=always
 WorkingDirectory=__TILDE_DIR__
-ExecStart=__INSTALL_DIR__/run-tilde-sbot.sh __TILDE_DIR__/tilde-sbot.toml __INSTALL_DIR__/tildefriends.standalone run
+ExecStart=__INSTALL_DIR__/run-tilde-sbot.sh __TILDE_DIR__/tilde-sbot.toml __INSTALL_DIR__/tildefriends.standalone
 StandardOutput=append:/var/log/__APP__/__APP__-tilde-sbot.log
 StandardError=inherit
 
