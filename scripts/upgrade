@@ -70,6 +70,7 @@ ynh_systemctl --service="$app-peach-web" --action="start"
 
 # for some reason a restart of peach-web is needed
 ynh_systemctl --service="$app-peach-web" --action="restart"
+ynh_systemctl --service="$app-peach-web" --action="restart"
 
 #=================================================
 # END OF SCRIPT
