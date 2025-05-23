@@ -10,11 +10,6 @@ source /usr/share/yunohost/helpers
 
 ynh_print_info "Declaring files to be backed up..."
 
-### N.B. : the following 'ynh_backup' calls are only a *declaration* of what needs
-### to be backuped and not an actual copy of any file. The actual backup that
-### creates and fills the archive with the files happens in the core after this
-### script is called. Hence ynh_backups calls take basically 0 seconds to run.
-
 #=================================================
 # BACKUP THE APP MAIN DIR
 #=================================================
@@ -36,14 +31,12 @@ ynh_backup "$data_dir"
 # BACKUP SYSTEM CONFIGURATION
 #=================================================
 
-# Backup the PHP-FPM configuration
-ynh_backup "/etc/php/$php_version/fpm/pool.d/$app.conf"
-
 # Backup the NGINX configuration
 ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
 
 # Backup the systemd service unit
-ynh_backup "/etc/systemd/system/$app.service"
+ynh_backup "/etc/systemd/system/$app-peach-web.service"
+ynh_backup "/etc/systemd/system/$app-tilde-sbot.service"
 
 # Backup the logrotate configuration
 ynh_backup "/etc/logrotate.d/$app"
@@ -56,22 +49,9 @@ ynh_backup "/etc/fail2ban/filter.d/$app.conf"
 # BACKUP VARIOUS FILES
 #=================================================
 
-ynh_backup "/etc/cron.d/$app"
-
-ynh_backup "/etc/$app/"
-
 # NB: /var/log is not backuped during safety-backup-before-upgrades, same as $data_dir
 ynh_backup "/var/log/$app/"
 
-#=================================================
-# BACKUP THE MYSQL DATABASE
-#=================================================
-ynh_print_info "Backing up the MySQL database..."
-
-### (However, things like MySQL dumps *do* take some time to run, though the
-### copy of the generated dump to the archive still happens later)
-
-ynh_mysql_dump_db > db.sql
 
 #=================================================
 # END OF SCRIPT

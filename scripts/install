@@ -7,31 +7,10 @@
 source _common.sh
 source /usr/share/yunohost/helpers
 
-### Install parameters are automatically saved as settings
-###
-### Settings are automatically loaded as bash variables
-### in every app script context, therefore typically these will exist:
-### - $domain
-### - $path
-### - $language
-### ... etc
-###
-### Resources defined in the manifest are provisioned prior to this script
-### and corresponding settings are also available, such as:
-### - $install_dir
-### - $port
-### - $db_name
-### ...
-###
-### $app is the app id (i.e. 'example' for first install,
-### or 'example__2', '__3'... for multi-instance installs)
-
 #=================================================
 # INITIALIZE AND STORE SETTINGS
 #=================================================
 
-# If you need to, you can define custom settings
-# (or remove this section entirely if not relevant for you)
 peach_web_service=$app-peach-web
 tilde_sbot_service=$app-tilde-sbot
 tilde_dir=$install_dir/.ssb-tilde
@@ -47,7 +26,7 @@ ynh_script_progression "Setting up source files..."
 
 # Download, check integrity, uncompress and patch the source from manifest.toml
 ynh_setup_source --dest_dir="$install_dir"
-chown -R "$app:www-data" "$install_dir"
+chown -R "$app:$app" "$install_dir"
 
 
 #=================================================
@@ -57,21 +36,24 @@ chown -R "$app:www-data" "$install_dir"
 mkdir -p $install_dir/config
 mkdir -p $install_dir/.ssb-tilde
 
-ynh_script_progression --message="Adding a configuration file for tilde-sbot" 
+ynh_script_progression "Adding a configuration file for tilde-sbot" 
 ynh_config_add --template="tilde-sbot.toml" --destination="$tilde_dir/tilde-sbot.toml"
 chmod 600 "$tilde_dir/tilde-sbot.toml"
 chown -R $app:$app "$tilde_dir/"
 
-ynh_script_progression --message="Adding a configuration file for peach-web" 
+ynh_script_progression "Adding a configuration file for peach-web" 
 ynh_config_add --template="peach.yml" --destination="$install_dir/config/config.yml"
 chmod 600 "$install_dir/config/config.yml"
 chown $app:$app "$install_dir/config/config.yml"
 
-ynh_script_progression --message="Creating /etc/sudoers.d/$app" 
+ynh_script_progression "Creating /etc/sudoers.d/$app" 
 mkdir -p /etc/sudoers.d/
 ynh_config_add --template="sudoers" --destination="/etc/sudoers.d/$app"
 chown root:root /etc/sudoers.d/$app
 chmod 440 /etc/sudoers.d/$app
+
+chown -R $app:$app $install_dir
+chmod -R u+rwX,g+rwX $install_dir
 
 #=================================================
 # SYSTEM CONFIGURATION
@@ -81,46 +63,13 @@ ynh_script_progression "Adding system configurations related to $app..."
 # Create a dedicated NGINX config using the conf/nginx.conf template
 ynh_config_add_nginx
 
-### `ynh_config_add_systemd` is used to configure a systemd script for an app.
-### It can be used for apps that use sysvinit (with adaptation) or systemd.
-### Have a look at the app to be sure this app needs a systemd script.
-### `ynh_config_add_systemd` will use the file conf/systemd.service
-### If you're not using these lines:
-###   - You can remove those files in conf/.
-###   - Remove the section "BACKUP SYSTEMD" in the backup script
-###   - Remove also the section "STOP AND REMOVE SERVICE" in the remove script
-###   - As well as the section "RESTORE SYSTEMD" in the restore script
-###   - And the section "SETUP SYSTEMD" in the upgrade script
-
 # Create a dedicated systemd config
 ynh_config_add_systemd --service=$app-peach-web --template=peach-web.service
 ynh_config_add_systemd --service=$app-tilde-sbot --template=tilde-sbot.service
 
-### `yunohost service add` integrates a service in YunoHost. It then gets
-### displayed in the admin interface and through the others `yunohost service` commands.
-### (N.B.: this line only makes sense if the app adds a service to the system!)
-### If you're not using these lines:
-###   - You can remove these files in conf/.
-###   - Remove the section "REMOVE SERVICE INTEGRATION IN YUNOHOST" in the remove script
-###   - As well as the section "INTEGRATE SERVICE IN YUNOHOST" in the restore script
-###   - And the section "INTEGRATE SERVICE IN YUNOHOST" in the upgrade script
-
-### Additional options starting with 3.8:
-### TODO: check this port thing again
-### --needs_exposed_ports "$port" a list of ports that needs to be publicly exposed
-###                               which will then be checked by YunoHost's diagnosis system
-###                               (N.B. DO NOT USE THIS if the port is only internal!!!)
+# add services to ynh
 yunohost service add "$app-peach-web" --description="peach-web service" --log="/var/log/$app/$app-peach-web.log"
-yunohost service add "$app-tilde-sbot" --description="tilde-sbot service" --log="/var/log/$app/$app-tilde-sbot.log"
-
-### TODO: remove this comment
-### `ynh_config_add_logrotate` is used to configure a logrotate configuration for the logs of this app.
-### Use this helper only if there is effectively a log file for this app.
-### If you're not using this helper:
-###   - Remove the section "BACKUP LOGROTATE" in the backup script
-###   - Remove also the section "REMOVE LOGROTATE CONFIGURATION" in the remove script
-###   - As well as the section "RESTORE THE LOGROTATE CONFIGURATION" in the restore script
-###   - And the section "SETUP LOGROTATE" in the upgrade script
+yunohost service add "$app-tilde-sbot" --needs_exposed_ports="$port_ssb" --description="tilde-sbot service" --log="/var/log/$app/$app-tilde-sbot.log"
 
 # Use logrotate to manage application logfile(s)
 ynh_config_add_logrotate
@@ -135,17 +84,12 @@ ynh_config_add_logrotate
 #=================================================
 ynh_script_progression "Starting $app's systemd services..."
 
-### `ynh_systemctl` is used to start a systemd service for an app.
-### Only needed if you have configure a systemd service
-### If you're not using these lines:
-###   - Remove the section "STOP SYSTEMD SERVICE" and "START SYSTEMD SERVICE" in the backup script
-###   - As well as the section "START SYSTEMD SERVICE" in the restore script
-###   - As well as the section"STOP SYSTEMD SERVICE" and "START SYSTEMD SERVICE" in the upgrade script
-###   - And the section "STOP SYSTEMD SERVICE" and "START SYSTEMD SERVICE" in the change_url script
-
 # Start a systemd service
 ynh_systemctl --service="$app-tilde-sbot" --action="start"
 ynh_systemctl --service="$app-peach-web" --action="start"
+
+# for some reason a restart of peach-web is needed
+ynh_systemctl --service="$app-peach-web" --action="restart"
 
 #=================================================
 # END OF SCRIPT

@@ -16,7 +16,7 @@ source /usr/share/yunohost/helpers
 #=================================================
 ynh_script_progression "Stopping $app's systemd service..."
 
-ynh_systemctl --service="$app" --action="stop"
+ynh_systemctl --service="$app-peach-web" --action="stop"
 
 #=================================================
 # MODIFY URL IN NGINX CONF
@@ -31,13 +31,20 @@ ynh_config_change_url_nginx
 #=================================================
 
 ## do any changes to files that reference specific installation domain/path, i.e. regenerate configs etc
+# TODO what is the best way to do something like this in yunohost
+# sed -i 's/$old_domain/$new_domain/g' $install_dir/config/config.yml
+# sed -i 's/$old_domain/$new_domain/g' $install_dir/.ssb-tilde/tilde-sbot.toml
 
 #=================================================
 # START SYSTEMD SERVICE
 #=================================================
 ynh_script_progression "Starting $app's systemd service..."
 
-ynh_systemctl --service="$app" --action="start"
+# Start a systemd service
+ynh_systemctl --service="$app-peach-web" --action="start"
+
+# for some reason a restart of peach-web is needed
+ynh_systemctl --service="$app-peach-web" --action="restart"
 
 #=================================================
 # END OF SCRIPT

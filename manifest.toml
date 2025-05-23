@@ -81,7 +81,7 @@ ram.runtime = "50M"
 
     [resources.sources.main]
     url = "https://files.commoninternet.net/assets/release-0.7.0~ynh1/peachpub-0.7.0~ynh1.tar.gz"
-    sha256 = "2ed9491d21c1aec30b1f9b36b1411c8e7716fccf8a7a410d3739a7b63697e987"
+    sha256 = "873b62027fd803d15eaf6b92d928786a8624f90e100f56577b8040fcbdb0289d"
     in_subdir = false
 
     # These infos are used by https://github.com/YunoHost/apps_tools/blob/main/autoupdate_app_sources/autoupdate_app_sources.py
