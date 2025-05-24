@@ -2,7 +2,7 @@
 
 packaging_format = 2
 
-id = "peachpub_ynh"
+id = "peachpub"
 name = "Peachpub"
 description.en = "Secure Scuttlebutt pub with a web interface for pub management."
 description.fr = "Sécuriser le pub Scuttlebutt avec une interface web pour la gestion du pub."
@@ -12,18 +12,11 @@ version = "0.7.0~ynh1"
 maintainers = ["Max Fowler"]
 
 [upstream]
-# NB: Only the "license" key is mandatory. Remove entries for which there's no relevant data
-license = "free" # you can see the available licenses identifiers list here: https://spdx.org/licenses/
-website = "https://peach.commoninternet.net"
-demo = "https://peachdemo.commoninternet.net"
-admindoc = "https://yunohost.org/packaging_apps"
-userdoc = "https://yunohost.org/apps"
+license = "MIT" # you can see the available licenses identifiers list here: https://spdx.org/licenses/
+website = "https://www.tildefriends.net/"
+#demo = "https://peachdemo.commoninternet.net"
+admindoc = "https://peach-docs.commoninternet.net"
 code = "https://git.coopcloud.tech/PeachCloud/peach-workspace"
-
-
-# FIXME: optional but recommended (or remove if irrelevant / not applicable).
-# This is meant to be an URL where people can financially support this app, especially when its development is based
-# on volunteers and/or financed by its community. YunoHost may later advertise it in the webadmin.
 fund = "https://opencollective.com/peachcloud"
 
 [integration]
@@ -33,8 +26,8 @@ helpers_version = "2.1"
 architectures = ["amd64", "arm64"]
 multi_instance = true
 
-ldap = "false"
-sso = "false"
+ldap = false
+sso = false
 disk = "50M"
 ram.build = "50M"
 ram.runtime = "50M"
@@ -43,11 +36,6 @@ ram.runtime = "50M"
     [install.domain]
     # this is a generic question - ask strings are automatically handled by YunoHost's core
     type = "domain"
-
-    [install.path]
-    # this is a generic question - ask strings are automatically handled by YunoHost's core
-    type = "path"
-    default = "/"
 
     [install.init_main_permission]
     # this is a generic question - ask strings are automatically handled by YunoHost's core
@@ -109,7 +97,7 @@ ram.runtime = "50M"
 
     [resources.ports]
     main.default = 8095
-    main.exposed = "false"
+    main.exposed = false
     ssb.default = 8008
     ssb.exposed = "Both"
 

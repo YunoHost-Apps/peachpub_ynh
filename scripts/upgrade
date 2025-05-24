@@ -44,10 +44,6 @@ ynh_config_add_nginx
 ynh_config_add_systemd --service=$app-peach-web --template=peach-web.service
 ynh_config_add_systemd --service=$app-tilde-sbot --template=tilde-sbot.service
 
-### TODO: check this port thing again
-### --needs_exposed_ports "$port" a list of ports that needs to be publicly exposed
-###                               which will then be checked by YunoHost's diagnosis system
-###                               (N.B. DO NOT USE THIS if the port is only internal!!!)
 yunohost service add "$app-peach-web" --description="peach-web service" --log="/var/log/$app/$app-peach-web.log"
 yunohost service add "$app-tilde-sbot" --needs_exposed_ports="$port_ssb" --description="tilde-sbot service" --log="/var/log/$app/$app-tilde-sbot.log"
 
