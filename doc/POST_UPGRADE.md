@@ -1,1 +1,1 @@
-This is a dummy disclaimer to display after upgrades
+Congratulations on upgrading, successfully upgraded.
