@@ -27,6 +27,12 @@ if ynh_hide_warnings yunohost service status "$app-tilde-sbot" >/dev/null; then
     yunohost service remove "$app-tilde-sbot"
 fi
 
+ynh_script_progression "Stopping $app's systemd service..."
+
+# stop systemd service and then remove it 
+ynh_systemctl --service="$app-peach-web" --action="stop"
+ynh_systemctl --service="$app-tilde-sbot" --action="stop"
+
 ynh_config_remove_systemd --service=$app-peach-web
 ynh_config_remove_systemd --service=$app-tilde-sbot
 
