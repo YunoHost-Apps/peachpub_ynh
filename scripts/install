@@ -52,6 +52,10 @@ ynh_config_add --template="sudoers" --destination="/etc/sudoers.d/$app"
 chown root:root /etc/sudoers.d/$app
 chmod 440 /etc/sudoers.d/$app
 
+ynh_script_progression "Setting admin password for peach-web" 
+chmod 770 $install_dir/peach-web
+PEACH_CONFIGDIR=$install_dir/config PEACH_CONFIG_PATH=$install_dir/config/config.yml $install_dir/peach-web change-password $password
+
 chown -R $app:$app $install_dir
 chmod -R u+rwX,g+rwX $install_dir
 

@@ -11,7 +11,7 @@ WorkingDirectory=__INSTALL_DIR__/
 Environment="PEACH_CONFIGDIR=__INSTALL_DIR__/config"
 Environment="PEACH_CONFIG_PATH=__INSTALL_DIR__/config/config.yml"
 Environment="RUST_LOG=info"
-ExecStart=__INSTALL_DIR__/peach-web
+ExecStart=__INSTALL_DIR__/peach-web run
 StandardOutput=append:/var/log/__APP__/__APP__-peach-web.log
 StandardError=inherit
 
