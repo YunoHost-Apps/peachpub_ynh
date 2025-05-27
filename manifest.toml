@@ -68,7 +68,7 @@ ram.runtime = "50M"
 
     [resources.sources.main]
     amd64.url = "https://files.commoninternet.net/assets/releases/peachpub-0.7.0~ynh1-amd64.tar.gz"
-    amd64.sha256 = "414417a51dabaf9f34a25b9cb158feb94f517fa96092412e21fe1d4a2e5a20aa"
+    amd64.sha256 = "1fea9a8d07b6d3722248c022cb8c87a29ef69e504545bafa1b5551232be28222"
     arm64.url = "https://files.commoninternet.net/assets/releases/peachpub-0.7.0~ynh1-arm64.tar.gz"
     arm64.sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
     in_subdir = false
