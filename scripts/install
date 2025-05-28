@@ -26,8 +26,8 @@ ynh_script_progression "Setting up source files..."
 
 # Download, check integrity, uncompress and patch the source from manifest.toml
 ynh_setup_source --dest_dir="$install_dir"
-chown -R "$app:$app" "$install_dir"
 
+chown -R "$app:$app" "$install_dir"
 
 #=================================================
 # APP INITIAL CONFIGURATION
@@ -81,7 +81,6 @@ ynh_config_add_logrotate
 # TODO: figure out fail2ban
 # Create a dedicated Fail2Ban config
 # ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
-
 
 #=================================================
 # START SYSTEMD SERVICE

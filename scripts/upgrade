@@ -20,17 +20,11 @@ ynh_systemctl --service="$app-tilde-sbot" --action="stop"
 #=================================================
 ynh_script_progression "Upgrading source files..."
 
-### ynh_setup_source can wipe the destination dir if called with --full_replace.
-### On upgrade, that is certainly what you want, to remove any old source file that
-### does not exist in the new version of the software.
-### You can list with --keep every file/directory to *not* wipe or overwrite,
-### useful for configuration files, data directories, or plugins.
 # Download, check integrity, uncompress and patch the source from manifest.toml
 ynh_setup_source --dest_dir="$install_dir" --full_replace --keep="config .ssb-tilde"
 
 chown -R "$app:$app" "$install_dir"
 chmod -R u+rwX,g+rwX $install_dir
-
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATION
@@ -53,7 +47,6 @@ ynh_config_add_logrotate
 # TODO: figure out fail2ban
 # Create a dedicated Fail2Ban config
 # ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
-
 
 #=================================================
 # START SYSTEMD SERVICE

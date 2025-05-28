@@ -53,7 +53,6 @@ ynh_backup "/etc/logrotate.d/$app"
 # NB: /var/log is not backuped during safety-backup-before-upgrades, same as $data_dir
 ynh_backup "/var/log/$app/"
 
-
 #=================================================
 # END OF SCRIPT
 #=================================================
