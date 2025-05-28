@@ -8,7 +8,7 @@ It shall NOT be edited by hand.
   Peachpub, packaged for YunoHost
 </h1>
 
-Secure Scuttlebutt pub with a web interface for pub management.
+Secure Scuttlebutt pub with a web interface for pub management
 
 [![🌐 Official app website](https://img.shields.io/badge/Official_app_website-darkgreen?style=for-the-badge)](https://www.tildefriends.net/)
 [![Version: 0.7.0~ynh1](https://img.shields.io/badge/Version-0.7.0~ynh1-rgba(0,150,0,1)?style=for-the-badge)](https://ci-apps.yunohost.org/ci/apps/peachpub/)
