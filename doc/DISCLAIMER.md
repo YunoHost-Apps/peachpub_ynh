@@ -1,2 +1,0 @@
- - requires a full dedicated domain and does not support sub-paths
- - currently ony supports the following architectures: amd64, arm64, arm7

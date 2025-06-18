@@ -1,0 +1,108 @@
+#:schema https://raw.githubusercontent.com/YunoHost/apps/main/schemas/manifest.v2.schema.json
+
+packaging_format = 2
+
+id = "peachpub"
+name = "Peachpub"
+description.en = "Secure Scuttlebutt pub with a web interface for pub management"
+description.fr = "Sécuriser le pub Scuttlebutt avec une interface web pour la gestion du pub"
+
+version = "0.7.0~ynh2"
+
+maintainers = ["Max Fowler"]
+
+[upstream]
+license = "MIT" # you can see the available licenses identifiers list here: https://spdx.org/licenses/
+website = "https://www.tildefriends.net/"
+admindoc = "https://peach-docs.commoninternet.net"
+code = "https://git.coopcloud.tech/PeachCloud/peach-workspace"
+fund = "https://opencollective.com/peachcloud"
+
+[integration]
+yunohost = ">= 12.0.9"
+helpers_version = "2.1"
+architectures = ["amd64", "arm64"]
+multi_instance = true
+
+ldap = false
+sso = false
+
+disk = "50M"
+ram.build = "50M"
+ram.runtime = "50M"
+
+[install]
+    [install.domain]
+    # this is a generic question - ask strings are automatically handled by YunoHost's core
+    type = "domain"
+
+    [install.init_main_permission]
+    # this is a generic question - ask strings are automatically handled by YunoHost's core
+    # This won't be saved as setting and will instead be used to initialize the SSOwat permission
+    type = "group"
+    default = "visitors"
+
+    [install.language]
+    ask.en = "Choose the application language"
+    ask.fr = "Choisissez la langue de l'application"
+    type = "select"
+    choices = ["fr", "en"]
+    default = "fr"
+
+    [install.admin]
+    # this is a generic question - ask strings are automatically handled by YunoHost's core
+    type = "user"
+
+    [install.password]
+    # this is a generic question - ask strings are automatically handled by YunoHost's core
+    # Note that user-provided passwords questions are not automatically saved as setting
+    help.en = "Use the help field to add an information for the admin about this question."
+    help.fr = "Utilisez le champ aide pour ajouter une information à l'intention de l'administrateur à propos de cette question."
+    type = "password"
+
+[resources]
+    # See the packaging documentation for the full set
+    # of explanation regarding the behavior and properties for each of those
+
+    [resources.sources]
+
+    [resources.sources.main]
+    amd64.url = "https://files.commoninternet.net/assets/releases/peachpub-0.7.0~ynh1-amd64.tar.gz"
+    amd64.sha256 = "178750af87ba2ec2fc2778ad9031870224b85e6aaf85716aab0375c1077af80a"
+    arm64.url = "https://files.commoninternet.net/assets/releases/peachpub-0.7.0~ynh1-arm64.tar.gz"
+    arm64.sha256 = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    in_subdir = false
+
+    # These infos are used by https://github.com/YunoHost/apps_tools/blob/main/autoupdate_app_sources/autoupdate_app_sources.py
+    # to auto-update the previous asset urls and sha256sum + manifest version
+    # assuming the upstream's code repo is on github and relies on tags or releases
+    # See the 'sources' resource documentation for more details
+
+    # autoupdate.strategy = "latest_github_tag"
+
+    [resources.system_user]
+    # This will provision/deprovision a unix system user
+
+    [resources.install_dir]
+    # This will create/remove the install dir as /var/www/$app
+    # and store the corresponding setting $install_dir
+
+    [resources.data_dir]
+    # This will create/remove the data dir as /home/yunohost.app/$app
+    # and store the corresponding setting $data_dir
+
+    [resources.permissions]
+    # This will configure SSOwat permission for $domain/$path/
+    # The initial allowed group of user is configured via the init_main_permission question (public=visitors, private=all_users)
+    main.url = "/"
+
+    [resources.ports]
+    main.default = 8095
+    main.exposed = false
+    ssb.default = 8008
+    ssb.exposed = "Both"
+
+    [resources.apt]
+    # This will automatically install/uninstall the following apt packages
+    # and implicitly define the $phpversion setting as 8.0 (if phpX.Y-foobar dependencies are listed)
+    packages = ""

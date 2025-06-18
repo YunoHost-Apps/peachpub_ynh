@@ -1,0 +1,12 @@
+# For details about tilde-sbot configuration, please visit tilde friends documentation
+database_directory = "__TILDE_DIR__"
+shscap = "1KHLiKZvAvjbY1ziZEHMXawbCEIM6qwjCDm3VYRan/s="
+hmac = ""
+replication_hops = 2
+ip = ""
+ssb_port = "__PORT_SSB__"
+localadv = false
+localdiscov = false
+enable_ebt = false
+promisc = true
+nounixsock = true

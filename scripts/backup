@@ -1,8 +1,6 @@
 #!/bin/bash
 
 #=================================================
-# GENERIC START
-#=================================================
 # IMPORT GENERIC HELPERS
 #=================================================
 
@@ -10,73 +8,53 @@
 source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
-#=================================================
-# MANAGE SCRIPT FAILURE
-#=================================================
-
-ynh_clean_setup () {
-	true
-}
-# Exit if an error occurs during the execution of the script
-ynh_abort_if_errors
-
-#=================================================
-# LOAD SETTINGS
-#=================================================
-ynh_print_info --message="Loading installation settings..."
-
-app=$YNH_APP_INSTANCE_NAME
-
-final_path=$(ynh_app_setting_get --app=$app --key=final_path)
-domain=$(ynh_app_setting_get --app=$app --key=domain)
-datadir=$(ynh_app_setting_get --app=$app --key=datadir)
-peach_web_service=$(ynh_app_setting_get --app=$app --key=peach_web_service)
-go_sbot_service=$(ynh_app_setting_get --app=$app --key=go_sbot_service)
-
-#=================================================
-# DECLARE DATA AND CONF FILES TO BACKUP
-#=================================================
-ynh_print_info --message="Declaring files to be backed up..."
+ynh_print_info "Declaring files to be backed up..."
 
 #=================================================
 # BACKUP THE APP MAIN DIR
 #=================================================
 
-ynh_backup --src_path="$final_path"
+ynh_backup "$install_dir"
 
 #=================================================
 # BACKUP THE DATA DIR
 #=================================================
 
-ynh_backup --src_path="$datadir" --is_big
+# Only relevant if there is a "data_dir" resource for this app
+# NB: $data_dir is not backuped during safety-backup-before-upgrades,
+# because the data dir may be huge and we don't want to just yolo-create a 10+ GB archive just for upgrades.
+# On the other hand, $data_dir is also *not* removed by default in the "app remove" step unless --purge is used
+# This means that even if the upgrade fails and the backup is restored, the data are still there.
+ynh_backup "$data_dir"
 
 #=================================================
-# BACKUP THE NGINX CONFIGURATION
+# BACKUP SYSTEM CONFIGURATION
 #=================================================
 
-ynh_backup --src_path="/etc/nginx/conf.d/$domain.d/$app.conf"
+# Backup the NGINX configuration
+ynh_backup "/etc/nginx/conf.d/$domain.d/$app.conf"
 
-#=================================================
-# BACKUP LOGROTATE
-#=================================================
+# Backup the systemd service unit
+ynh_backup "/etc/systemd/system/$app-peach-web.service"
+ynh_backup "/etc/systemd/system/$app-tilde-sbot.service"
 
-ynh_backup --src_path="/etc/logrotate.d/$app"
+# Backup the logrotate configuration
+ynh_backup "/etc/logrotate.d/$app"
 
-#=================================================
-# BACKUP SYSTEMD
-#=================================================
-
-ynh_backup --src_path="/etc/systemd/system/$peach_web_service.service"
-ynh_backup --src_path="/etc/systemd/system/$go_sbot_service.service"
+# TODO: re-add this
+# Backup the Fail2Ban config
+# ynh_backup "/etc/fail2ban/jail.d/$app.conf"
+# ynh_backup "/etc/fail2ban/filter.d/$app.conf"
 
 #=================================================
 # BACKUP VARIOUS FILES
 #=================================================
 
-ynh_backup --src_path="/etc/sudoers.d/$app"
+# NB: /var/log is not backuped during safety-backup-before-upgrades, same as $data_dir
+ynh_backup "/var/log/$app/"
 
 #=================================================
 # END OF SCRIPT
 #=================================================
 
-ynh_print_info --message="Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."
+ynh_print_info "Backup script completed for $app. (YunoHost will then actually copy those files to the archive)."
