@@ -42,11 +42,11 @@ yunohost service add "$app-peach-web" --description="peach-web service" --log="/
 yunohost service add "$app-tilde-sbot" --needs_exposed_ports="$port_ssb" --description="tilde-sbot service" --log="/var/log/$app/$app-tilde-sbot.log"
 
 # Use logrotate to manage application logfile(s)
-ynh_config_add_logrotate
+ynh_config_add_logrotate /var/log/$app/$app-peach-web.log
+ynh_config_add_logrotate /var/log/$app/$app-tilde-sbot.log
 
-# TODO: figure out fail2ban
 # Create a dedicated Fail2Ban config
-# ynh_config_add_fail2ban --logpath="/var/log/nginx/${domain}-error.log" --failregex="Regex to match into the log for a failed login"
+ynh_config_add_fail2ban --logpath="/var/log/$app/$app-peach-web.log" --failregex='^.*peach_web::routes::authentication::login\] Unsuccessful login attempt from "<HOST>"$'
 
 #=================================================
 # START SYSTEMD SERVICE
