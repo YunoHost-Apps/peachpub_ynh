@@ -4,7 +4,6 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-
 source /usr/share/yunohost/helpers
 
 #=================================================
@@ -22,9 +21,6 @@ ynh_script_progression "Upgrading source files..."
 
 # Download, check integrity, uncompress and patch the source from manifest.toml
 ynh_setup_source --dest_dir="$install_dir" --full_replace --keep="config .ssb-tilde"
-
-chown -R "$app:$app" "$install_dir"
-chmod -R u+rwX,g+rwX $install_dir
 
 #=================================================
 # REAPPLY SYSTEM CONFIGURATION
