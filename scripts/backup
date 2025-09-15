@@ -4,8 +4,6 @@
 # IMPORT GENERIC HELPERS
 #=================================================
 
-# Keep this path for calling _common.sh inside the execution's context of backup and restore scripts
-source ../settings/scripts/_common.sh
 source /usr/share/yunohost/helpers
 
 ynh_print_info "Declaring files to be backed up..."
@@ -20,11 +18,6 @@ ynh_backup "$install_dir"
 # BACKUP THE DATA DIR
 #=================================================
 
-# Only relevant if there is a "data_dir" resource for this app
-# NB: $data_dir is not backuped during safety-backup-before-upgrades,
-# because the data dir may be huge and we don't want to just yolo-create a 10+ GB archive just for upgrades.
-# On the other hand, $data_dir is also *not* removed by default in the "app remove" step unless --purge is used
-# This means that even if the upgrade fails and the backup is restored, the data are still there.
 ynh_backup "$data_dir"
 
 #=================================================
