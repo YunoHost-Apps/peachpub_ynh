@@ -7,7 +7,7 @@ name = "Peachpub"
 description.en = "Secure Scuttlebutt pub with a web interface for pub management"
 description.fr = "Sécuriser le pub Scuttlebutt avec une interface web pour la gestion du pub"
 
-version = "0.7.0~ynh4"
+version = "0.7.0~ynh5"
 
 maintainers = ["Max Fowler"]
 
@@ -50,8 +50,6 @@ ram.runtime = "50M"
     type = "user"
 
     [install.password]
-    help.en = "Use the help field to add an information for the admin about this question."
-    help.fr = "Utilisez le champ aide pour ajouter une information à l'intention de l'administrateur à propos de cette question."
     type = "password"
 
 [resources]
