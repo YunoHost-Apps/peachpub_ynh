@@ -7,7 +7,7 @@ name = "Peachpub"
 description.en = "Secure Scuttlebutt pub with a web interface for pub management"
 description.fr = "Sécuriser le pub Scuttlebutt avec une interface web pour la gestion du pub"
 
-version = "0.7.0~ynh4"
+version = "0.7.0~ynh5"
 
 maintainers = ["Max Fowler"]
 
